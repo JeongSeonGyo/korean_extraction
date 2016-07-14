@@ -1,0 +1,10658 @@
+Ultra Low Power Transmitters for Wireless Sensor
+
+Networks
+
+Yuen Hui Chee
+Jan M. Rabaey
+Ali Niknejad
+
+Electrical Engineering and Computer Sciences
+University of California at Berkeley
+
+Technical Report No. UCB/EECS-2006-57
+http://www.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-57.html
+
+May 15, 2006
+
+Copyright © 2006, by the author(s).
+
+All rights reserved.
+
+ 
+Permission to make digital or hard copies of all or part of this work for
+personal or classroom use is granted without fee provided that copies are
+not made or distributed for profit or commercial advantage and that copies
+bear this notice and the full citation on the first page. To copy otherwise, to
+republish, to post on servers or to redistribute to lists, requires prior specific
+permission.
+
+Ultra Low Power Transmitters for Wireless Sensor Networks 
+
+ 
+by 
+ 
+
+Yuen Hui Chee 
+
+B.Eng. (National University of Singapore, Singapore) 1998 
+M.Eng. (National University of Singapore, Singapore) 2000 
+
+A dissertation submitted in partial satisfaction  
+
+of the requirements for the degree of 
+
+Doctor of Philosophy 
+
+Engineering – Electrical Engineering and Computer Sciences 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+
+ 
+in 
+ 
+
+in the 
+
+of the 
+
+GRADUATE DIVISION 
+
+UNIVERSITY OF CALIFORNIA, BERKELEY 
+
+ Committee in charge: 
+
+Professor Jan Rabaey, Chair 
+
+Professor Ali Niknejad 
+Professor Paul Wright 
+
+  
+
+Spring 2006 
+
+ 
+
+The dissertation of Yuen Hui Chee is approved by 
+
+______________________________________________________________ 
+
+Professor Jan Rabaey, Chair   
+
+  
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Date 
+
+Date 
+
+Date 
+
+______________________________________________________________ 
+
+Professor Ali Niknejad 
+
+______________________________________________________________ 
+
+Professor Paul Wright  
+
+University of California, Berkeley 
+
+Spring 2006 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+
+ 
+by 
+ 
+
+Yuen Hui Chee 
+
+Ultra Low Power Transmitters for Wireless Sensor Networks 
+
+Copyright 2006 
+
+ 
+
+Ultra Low Power Transmitters for Wireless Sensor Networks 
+
+Abstract 
+
+Yuen Hui Chee 
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+by 
+ 
+
+ 
+
+ 
+
+Doctor of Philosophy in Engineering – Electrical Engineering and Computer Sciences 
+
+University of California, Berkeley 
+
+Professor Jan Rabaey, Chair 
+
+ 
+ 
+ 
+
+The  emerging  field  of  wireless  sensor  network  (WSN)  potentially  has  a  profound 
+
+impact  on  our  daily  life.    Widespread  deployment  of  wireless  sensor  network  requires 
+
+each node to (1) consume less than 100µW of average power for a long usage lifetime 
+
+and low operational cost, (2) cost less than $1 for a low system cost and (3) occupy less 
+
+than  1cm3  for  seamless  integration  into  our  physical  environment.    Among  these 
+
+requirements,  the  power  constraint  is  the  most  challenging.    Since  communication 
+
+accounts for majority of power budget in a typical sensor node, it is crucial to have an 
+
+energy efficient transmitter.  In WSN, the radiated power is low (< 1mW) due to the short 
+
+communication distance (< 10m).  As such low radiated power, the overhead power is 
+
+significant and degrades the transmitter efficiency substantially.  This is the reason for the 
+
+low efficiency of WSN existing transmitters. 
+
+The  thesis  focuses  on  providing  a  solution  to  this  problem.    It  first  establishes  the 
+
+principles of obtaining an energy efficient transmitter at low radiated power.  Based on 
+
+ 
+
+1
+
+these principles, three different 1.9GHz transmitters are designed and implemented in ST 
+
+0.13µm CMOS process: direct modulation transmitter, injection locked transmitter and 
+
+active antenna transmitter.  To push the performance envelope of WSN transmitters, new 
+
+transmitter  architectures,  circuit  techniques,  enabling  technologies  and  co-design 
+
+methodology are employed.  The state-of-the-art active antenna transmitter achieves 46% 
+
+efficiency and support a data rate up to 330 kbps.   
+
+Finally,  to  demonstrate  a  low  power  and  small  form  factor  sensor  node,  the  active 
+
+antenna transmitter is integrated into a 38 x 25 x 8.5 mm3 wireless transmit sensor node.   
+
+ 
+______________________________ 
+Professor Jan Rabaey 
+Dissertation Committee Chair 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+2
+
+ 
+ 
+ 
+Table of Contents 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Abstract 
+
+Table of Contents 
+
+List of Figures 
+
+List of Tables 
+
+Acknowledgements 
+
+1 
+
+i 
+
+v 
+
+viii 
+
+ix 
+
+1.  Introduction………….. …………………………………………………………... 
+1.1. Wireless Sensor Networks (WSN).........................…………………….......... 
+1.2. Challenges……..………..…………………………………............................  
+1.2.1.  Available Power….. ...…………………………………....................... 
+1.2.2.  Cost…..……..………………………………………….......................  
+1.2.3.  Form Factor…….....……………………..............................................  
+
+1 
+1 
+3 
+4 
+6 
+10 
+1.3. The Need for High Performance Transmitters in WSN.…..…………………  12 
+1.4. Transmitter Requirements……………………………………………………  12 
+1.4.1.  Radiated Power……………………………………………………… . 
+13 
+1.4.2.  Efficiency..…………………………………………………………….  13 
+1.4.3.  Integration……………………………………………………….…….  14 
+1.4.4.  Data Throughput………………………………………………………  15 
+
+ 
+
+ 
+
+i
+
+1.5. State-of-the-Art……………….………………………………………………  15 
+1.5.1.  Direct Conversion Transmitter………………………………….…….  16 
+1.5.2.  Direct Modulation Transmitter…………..……………………………  17 
+1.6. Contributions and Scope of this Thesis………………………………………  18 
+
+2.  Energy Efficient Transmitter Design…..……………………………………….....  23 
+2.1. Design Principles……………………………………………………………..  23 
+2.2. Design Considerations………………………………………………………..  25 
+2.2.1.  Design Methodology………………………………………......…... … 
+25 
+2.2.2.  Transmitter Architectures……………………………………………..  26 
+2.2.3.  Active Time…………………………………………………………...  29 
+2.2.4.  Power Control…………………………………………………………  33 
+2.3. Low Power Circuit Techniques…..…………………………….…………….  34 
+2.3.1.  Subthreshold MOSFET Operation…………………………………….  34 
+2.3.2.  Supply Voltage Reduction…………………………………………….  36 
+2.4. Enabling Technologies – RF MEMS..……………………………………….  
+36 
+2.4.1.  FBAR Resonator…………………………………………………….. . 
+37 
+2.4.2.  Advantages of FBAR resonators……………………………………...  38  
+
+3.  Direct Modulation Transmitter…………………………………………………....   41 
+3.1. Architecture…………………………………………………………………..  41 
+3.2. Low Power FBAR Oscillator……………………………………………….. . 
+43 
+3.2.1.  Low Power Oscillator Design…………………………………………  43 
+3.2.2.  Startup Time………………………………………………………….. 
+46 
+3.2.3.  Implementation………………………………………………………..  48 
+3.2.4.  Measured Results……………………………………………………...  49 
+3.3. Low Power Amplifier………………………………………………………...  52 
+3.3.1.  Principles of Efficient Power Amplification…………………………..  52 
+3.3.2.  Switching and Non-Switching Power Amplifiers ……………………. 
+54 
+3.4. Transmitter Prototype………………………………………………………...  58 
+3.4.1.  Implementation......................................................................................  58 
+
+ 
+
+ii
+
+3.4.2.  Measured Results………………………………………………………  60 
+
+4.  Injection locked Transmitter………………………………………………………  66 
+4.1. Architecture…………………………………………………………………..  66 
+4.2. Injection Locking…………………………………………………………… . 
+68 
+4.3. Power Oscillator…………………………………………………….………..  71 
+4.3.1.  Efficient Power Oscillator Design…………………………………….  71 
+4.3.2.  Lock-in Range and Lock-in Time ……………………………………. 
+73 
+4.3.3.  Layout…………………………………………………………………  73 
+4.4. Transmitter Prototype………………………………………………………...  75 
+75 
+75 
+
+4.4.1.  Implementation ………………………………………………………. 
+4.4.2.  Measured Results …………………………………………………….. 
+
+5.  Active Antenna Transmitter ……………………………………………………… 
+
+82 
+5.1. Architecture…………………………………………………………………..  83 
+5.2. Active Antenna……………………………………………………………….  85 
+5.2.1.  Design Considerations…………………………………………………  85 
+5.2.2.  Printed Inverted L Antenna (PILA)……………………………………  86 
+5.3. Fast Startup FBAR Oscillator...………………………………………… …... 
+90 
+5.4. Low Power Amplifier/Antenna Co-design ………………………………….. 
+91 
+5.5. Transmitter Prototype ………………………………………………………..  94 
+5.5.1.  Implementation………………………………………………………..  94 
+5.5.2.  Measured Results………………………………………………………  94 
+
+6.  Wireless Transmit Sensor Node…………………………………………………. . 
+
+98 
+6.1. Sensor Node Design.…………………………………………………………  99 
+6.1.1.  System Overview……………………………………………………...  99 
+6.1.2.  Microcontroller………………………………………………….…….  99 
+6.1.3.  Sensors…………………………………………………………………  101 
+6.1.4.  Power Train……………………………………………………………  102 
+6.1.5.  RF Transmitter  ………………………………………………………  105 
+6.2. Sensor Node Operation……………………………………………………….  105 
+
+ 
+
+iii
+
+6.3. Sensor Node Prototype ………………………………………………………  108 
+6.3.1.  Implementation………………………………………………………..  108 
+6.3.2.  Measured Results……………………………………………………… 110 
+7.  Conclusions …………………………………………………………………… …  113 
+7.1. Summary……………………………………………………………………… 113 
+7.2. Perspectives…………………………………………………………………… 116 
+
+ 
+
+Bibliography…………………………………………………………………………..  117 
+
+ 
+
+iv
+
+ 
+ 
+ 
+List of Figures 
+
+Block diagram of FBAR-based direct modulation transmitter 
+
+Schematic of an ultra low power FBAR oscillator 
+
+ 
+
+v
+
+Power breakdown of direct conversion transmitter in [Choi03] 
+Block diagram of the direct modulation transmitter 
+Performance of state-of-the-art WSN transmitters 
+
+Conceptual diagram of a wireless sensor network 
+State-of-the art wireless sensor nodes: (left) Telos and (right) MicaZ motes 
+Telos Node: (top) front side, (bottom) back side of the node 
+Average TX power consumption as a function of its efficiency 
+
+ 
+ 
+1.1 
+1.2 
+1.3 
+1.4 
+1.5   Block diagram of a direct conversion transmitter 
+1.6 
+1.7 
+1.8 
+2.1  Model of a wireless transmitter 
+2.2 
+2.3 
+2.4 
+2.5 
+2.6 
+2.7 
+2.8 
+2.9 
+2.10 
+2.11  Circuit model of the FBAR resonator 
+2.12  Frequency response of the FBAR resonator 
+2.13  Monolithic integration of FBAR with integrated circuits 
+3.1 
+3.2  Model of an oscillator 
+3.3 
+
+Block diagram of the direct conversion transmitter 
+Block diagram of the direct modulation transmitter 
+Block diagram of the injection-locked transmitter 
+Block diagram of the active antenna transmitter 
+Effect on increasing data rate on transmit power 
+Average transmit power consumption as a function of data rate 
+Typical biasing technique for a power amplifier 
+gm/Id and fT versus inversion coefficient of a submicron NMOS transistor 
+(Left) structure (right) photograph of a FBAR resonator 
+
+2 
+3 
+6 
+14 
+16 
+17 
+17 
+21 
+23 
+26 
+27 
+28 
+29 
+30 
+31 
+33 
+35 
+37 
+37 
+38 
+39 
+42 
+43 
+44 
+
+Negative resistance of FBAR oscillator as a function of C1 and C2 
+Negative resistance of FBAR oscillator versus amplifier gm 
+
+3.4 
+3.5 
+3.6  Measured startup transients of an FBAR oscillator 
+3.7 
+3.8 
+3.9  Measured phase noise performance of FBAR oscillator 
+3.10  Measured output voltage swing and phase noise performance of FBAR 
+
+Die photo of the FBAR oscillator 
+Output frequency spectrum of FBAR oscillator 
+
+oscillator for various power consumptions 
+
+3.11  Schematic of a low power amplifier 
+3.12  Schematic of a non-switching power amplifier 
+3.13  Normalized device size and maximum efficiency versus conduction angle 
+3.14  Schematic of the direct modulation transmitter 
+3.15  Die photo of the direct modulation transmitter 
+3.16  Power consumption and efficiency of the direct modulation transmitter 
+3.17  Oscillator startup time as a function of power consumption 
+3.18  Oscillator’s startup waveforms at various power consumptions 
+3.19  Output spectrum of the direct modulation transmitter 
+3.20  Modulated on-off keying transient waveforms 
+3.21  Output tank tuning using capacitor array with various bond wire length 
+3.22  Oscillator supply pushing 
+3.23  Power budget of (left) direct modulation TX, (right) direct conversion TX 
+Block diagram of (a) direct modulation TX and (b) injection locked TX 
+4.1 
+Diagram of LC oscillator with a small perturbation signal 
+4.2 
+(left) Frequency response of tank under injection and (right) phasor diagram 
+4.3 
+Schematic of the injection locked oscillator 
+4.4 
+Layout of the power oscillator 
+4.5 
+4.6 
+(left) Die photo of power oscillator and (right) close-up of the PCB 
+4.7  Measured transmitter efficiency of the injection locked transmitter 
+4.8 
+4.9 
+4.10  Measured lock-in range of the injection locked transmitter 
+
+Power oscillator phase noise performance 
+Output spectrum when power oscillator is (left) free running (right) locked 
+
+ 
+
+vi
+
+45 
+46 
+47 
+49 
+49 
+50 
+
+51 
+53 
+55 
+58 
+59 
+60 
+60 
+61 
+62 
+62 
+63 
+63 
+64 
+64 
+67 
+68 
+69 
+71 
+74 
+75 
+76 
+77 
+77 
+78 
+
+Block diagram of the two channel active antenna transmitter 
+PA-antenna co-design 
+Design of the printed inverted L antenna (PILA) 
+Impedance loci of the PILA antenna 
+Radiation pattern of the PILA antenna 
+Schematic of the fast startup FBAR oscillator 
+Schematic of the low power amplifier 
+Techniques to create multiple channels with FBAR oscillators 
+
+79 
+4.11  Measured lock-in time of the injection locked transmitter 
+79 
+4.12  Waveform of on-off keying data of the injection locked transmitter 
+80 
+4.13  Measured tuning range of capacitor array C1 
+80 
+4.14  Power budget of (left) injection locked TX, (right) direct modulation TX 
+83 
+5.1  Matching network efficiency for direct modulation transmitter 
+84 
+5.2 
+86 
+5.3 
+87 
+5.4 
+89 
+5.5 
+90 
+5.6 
+91 
+5.7 
+92 
+5.8 
+93 
+5.9 
+5.10  Die photo of the active antenna transmitter 
+94 
+5.11  Transmitter efficiency and power consumption as a function of output power  95 
+96 
+5.12  Transient waveform of the fast startup oscillator 
+96 
+5.13  Phase noise performance of the FBAR oscillator 
+5.14  Power budget of (left) active antenna TX, (right) direct modulation TX 
+97 
+99 
+6.1 
+6.2 
+100 
+103 
+6.3 
+104 
+6.4 
+6.5 
+106 
+108 
+6.6 
+6.7 
+111 
+115 
+7.1  
+
+Block diagram of the wireless transmit sensor node 
+Block diagram of MSP4301232 microcontroller 
+Output power and I-V characteristics of solar cell under indoor conditions 
+Conversion efficiency of TPS60313 charge pump regulator 
+State diagram of wireless transmit sensor node 
+Photo of the wireless transmit sensor node 
+Output spectrum of wireless transmit sensor node 
+Performance of state-of-the-art WSN transmitters 
+
+ 
+
+vii
+
+ 
+ 
+ 
+List of Tables 
+
+ 
+ 
+1.1   Average power density of energy sources for WSN 
+1.2 
+1.3 
+1.4 
+3.1 
+6.1 
+6.2 
+6.3 
+
+Inductor integration and power consumption tradeoffs 
+Nominal current consumption of a state-of-the-art sensor node when active 
+Average TX power PTX,ave for traffic load of 1 pkt/sec, 1000 bits/pkt 
+Comparison of FBAR oscillator with state-of-the-art 
+Bill of material of wireless transmit sensor node 
+Current consumption of wireless transmit sensor node in various states 
+Environmental effects on wireless transmit sensor node 
+
+4 
+10 
+12 
+21 
+52 
+109 
+110 
+112 
+
+ 
+
+ 
+
+viii
+
+ 
+ 
+ 
+Acknowledgements 
+
+ 
+ 
+
+First and foremost, I would like to my advisers, Professor Jan Rabaey and Professor Ali 
+
+Niknejad.    Professor  Rabaey,  thank  you  very  much  for  your  encouragement,  guidance 
+
+and support for the years I spent in Berkeley.  You are truly visionary and a great advisor.   
+
+Professor Niknejad, thank you for teaching so much about RF circuits and all the advice 
+
+that you have given me.  I really enjoyed those brainstorming and discussion sessions that 
+
+we had.  Without both of you, this research would not be possible.  Thank you. 
+
+I am grateful to Professor Paul Wright and Professor Stephen Smith for their valuable 
+
+advice  given  during  my  Qualifying  Exam.    Many  thanks  to  Professor  Robert  Meyer, 
+
+Professor Bernhard Boser, Professor Robert Brodersen, Professor Jan Rabaey, Professor 
+
+Ali  Niknejad,  Professor  Seth  Sanders  and  Professor  Bora  Nikolic  for  their  inspiring 
+
+integrated circuit courses that have given me a deeper understanding of integrated circuit 
+
+design.  To all the Professors and Teaching Assistants who have taught me, I thank you. 
+
+I  am  thankful  to  our  industrial  collaborators,  especially  STMicroelectronics  for 
+
+supporting  the  chip  fabrications  and  Agilent  Technologies  for  sharing  the  FBAR 
+
+technology.  Thanks to Dr. Gupta Bhusan for his valuable suggestions during the design 
+
+reviews and Dr. Mike Frank for his insightful discussions on the FBAR resonators. 
+
+ 
+
+ix
+
+I would also like to thank Professor Robert Brodersen and Professor Jan Rabaey for 
+
+founding the Berkeley Wireless Research Center (BWRC).  I have been very fortunate to 
+
+earn  my  Ph.D.  in  such  a  stimulating  and  rich  environment.    Thanks  to  all  the  BWRC 
+
+staff, especially Gary Kelson, Brian Richards, Kelvin Zimmerman, Elise Mills, Jennifer 
+
+Stone, Sue Mellers, Fred Burghardt, Tom Boot, Jessica Budgin and Brenda Vanoni. 
+
+It also has been a great working with my lab-mates in BWRC.  In particular, I would 
+
+like to thank the PicoRadioRF team (Brian Otis, Nate Pletcher, Simone Gambini, Yanmei 
+
+Li, Davide Guermandi, Michael Mark, Richard Lu, Ulrich Schuster) for the wonderful 
+
+time that we spent together.  Many thanks to Stanley Wang, Naratip Wongkomet, Yun 
+
+Chiu, Luns Tee, En-Yi Lin, Cheol-Woong Lee, Bill Tsang, Mounir Bohsali  Mike Sheets, 
+
+Josie Ammer, Mike Chen and Patrick McElwee for all the insightful discussions, support 
+
+and encouragement.  I also greatly appreciate all the help from Pavel Monat, Ben Liu, 
+
+Philip Liu, Nurrachman Liu and Fan Zhang. 
+
+I  am  also  grateful  to  Professor  Gamani  Karunasiri  (Naval  Postgraduate  School)  and 
+
+Professor Yeo-Swee Ping (National University of Singapore) for their invaluable advice 
+
+over the years.     
+
+ Special  thanks  to  my  family,  especially  my  Mom  and  Dad,  for  their  support  and 
+
+encouragement over the years. 
+
+Finally, I am thankful to my wife, Siew-Leng Teng for her love and all the little ones.    
+
+ 
+
+x
+
+ 
+ 
+ 
+Chapter 1 
+ 
+Introduction 
+
+ 
+ 
+ 
+ 
+1.1  Wireless Sensor Networks 
+
+The emerging field of wireless sensor networks (WSN) creates a new paradigm in the 
+
+way we interact with our environment.  Recent technological advances in MEMS, energy 
+
+scavenging, energy storage and IC packaging, coupled with the availability of low power, 
+
+low  cost  digital  and  analog/RF  electronics  have  made  it  possible  to  realize  a  dense 
+
+network of inexpensive wireless sensor nodes, each having sensing, computational and 
+
+communication  capabilities  [Rabaey02].    These  ubiquitous  wireless  sensor  networks 
+
+allow  us  to  sense,  manage  and  actuate  a  vast  number  of  autonomous  sensor/actuator 
+
+nodes  embedded  in  the  fabrics  of  our  daily  living  environment.    Such  ambient 
+
+intelligence provides endless possibilities like environmental control in office buildings, 
+
+integrated  patient  monitoring,  diagnostics  and  drug  administration  in  hospital,  smart 
+
+homes,  identification  and  personalization,  automatic  industrial  monitoring  and  control 
+
+systems, smart consumer electronics, warehouse inventory, automotive networks, traffic 
+
+regulation  and  water/air  quality  monitoring.    It  is  estimated  that  the  number  of  sensor 
+
+ 
+
+1
+
+nodes  deployed  will  explode  from  200,000  today  to  100  million  by  2008,  and  the 
+
+worldwide market will grow from $100 million presently to more than $1 billion by 2009 
+
+[Harbor05].   
+
+Conceptually, a wireless sensor network consists of a dense network of nodes, spaced 
+
+less  than  10m  apart  as  shown  in  Fig.  1.1.    In  typical  deployment  scenarios,  a  few 
+
+neighboring nodes lie within the communication radius of the each node. 
+
+Peer to Peer link 
+
+Active node 
+Inactive node 
+
+Node’s neighbourhood 
+
+Multi-hops link 
+
+Broadcast 
+
+                      Fig 1.1: Conceptual diagram of a wireless sensor network. 
+
+ 
+
+Each  sensor  node  performs  several  functions  such  as  (1)  sensing  the  physical 
+
+parameters of its environment, (2) processing the raw data locally to extract the feature of 
+
+interest  and  (3)  transmitting  the  information  to  its  neighbors  through  a  wireless  link.  
+
+Unlike cellular networks or wireless LAN, there are no base stations or access points in 
+
+wireless  sensor  networks.    Hence,  each  node  operates  as  a  relay  point  to  implement  a 
+
+multi-hop  communication  link  by  receiving  data  from  one  of  its  neighbor,  and  then 
+
+ 
+
+2
+
+processing  it  before  routing  it  to  the  next  neighbor  towards  the  destination.    In  some 
+
+cases,  more  advanced  functions  such  as  data  compression  and  encryption  are  also 
+
+incorporated.                      
+
+ 
+
+1.2  Challenges 
+
+For  successful  large  scale  deployment  of  wireless  sensor  networks,  each  node  must 
+
+have  low  power  consumption,  low  operating  and  system  cost  and  a  small  form  factor. 
+
+Fig. 1.2 shows two existing state-of-the-art wireless sensor nodes [Moteiv, Crossbow].     
+
+Fig 1.2: State-of-the art wireless sensor nodes: (left) Telos and (right) MicaZ motes. 
+
+                    
+
+ 
+
+The  power,  size  and  cost  of  these  sensor  nodes  are  inadequate  for  large  scale 
+
+deployment of wireless sensor networks.  The electronics consume much power (10’s of 
+
+mW), thus requiring frequent replacement or recharging of the batteries.  This makes it 
+
+economically infeasible to deploy a large number of nodes as the operational cost will be 
+
+too high.  The node is significant in size due to the two large AA size batteries, making it 
+
+difficult to embed them into the physical environment (e.g. in walls, furniture, clothing, 
+
+etc).    To  seamlessly  integrate  these  nodes  into  our  environment,  the  node  size  ideally 
+
+needs  to  be  less  than  1cm3.    These  nodes  are  also  assembled  from  a  large  number  of 
+
+components and ICs, resulting in sub-optimal performance and high system cost.  These 
+
+ 
+
+3
+
+shortcomings clearly illustrate that further research is necessary to reduce the power, size 
+
+and cost of wireless sensor nodes and understand their trade-offs to achieve the optimal 
+
+performance.  These challenges and tradeoffs are discussed as follows. 
+
+ 
+
+1.2.1  Available Power 
+
+Successful large scale deployment wireless sensor nodes require them to be energy self-
+
+sufficient for their entire useful lifetime. Otherwise, the operational cost of replenishing 
+
+their  energy  source  will  be  enormous,  especially  when  deployed  in  areas  that  are  not 
+
+readily accessible.  Some applications dictate a node lifetime to last up till ten years (e.g. 
+
+seismic  detection  in  buildings),  and  this  can  impose  severe  constraints  on  the  node’s 
+
+power  consumption.    The  available  power  is  determined  by  the  power  density  and  the 
+
+size of the energy source.  Table 1.1 shows the power density of several possible low cost 
+
+energy sources for powering a sensor node [Roundy05].  These sources can be classified 
+
+as an energy storage device (battery) or energy scavenging device (solar cells, vibration 
+
+and air flow converters).   
+
+Table 1.1: Average power density of energy sources for WSN. 
+
+Energy Source 
+
+Lithium battery  
+
+Average Power Density  
+
+Usage Lifetime 
+
+100 µW/cm3 
+
+1 year 
+
+Solar cell 
+
+10 µW/cm2 (indoor) – 15 mW/cm2 (outdoor) 
+
+Very long*  
+
+Vibration converters 
+
+Air flow converters 
+
+375 µW/cm3 
+
+380 µW/cm3 
+
+Very long* 
+
+Very long* 
+
+* Lifetime is determined by the time to failure of the conversion device. 
+
+ 
+
+4
+
+Among  all  the  energy  sources,  the  battery  is  the  most  versatile  since  its  operation  is 
+
+relatively independent of its operating environment.  However, its average power density 
+
+is only 100 µW/cm3 per year.  For a small sensor node (e.g. ~1 cm3), the amount of stored 
+
+energy is not sufficient to operate the node for a long period of time.  On the other hand, 
+
+energy  scavenging  devices  typically  have  a  higher  power  density  and  a  longer  usage 
+
+lifetime (until it fails) but their performance depend on specific environmental conditions.  
+
+For  example,  solar  cells  perform  well  under strong  sunlight  and  can  be  used  to  power 
+
+sensor nodes placed near the windows, on the rooftop or outdoors during the day.  Air 
+
+flow  energy  scavengers  require  strong  air  movement  and  can  be  deployed  in  air-
+
+conditioning ducts.  Vibrational converters work best with strong vibrations and can be 
+
+employed in sensor nodes mounted on mechanical machines.   
+
+Currently, there is no universal energy source since none of the energy sources possess 
+
+high energy density, long usage lifetime and are yet versatile simultaneously.  Hence, it is 
+
+likely that sensor nodes will be powered by a combination of different types of energy 
+
+sources.  One such hybrid power source is to use solar cells to charge the battery and 
+
+power  the  node  during  the  day,  and  employs  the  battery  to  operate  the  node  at  night.  
+
+Combining both the energy storage and energy scavenging sources, the average power 
+
+consumption of a 1cm3 sensor node is ~100µW.  This severe power requirement is the 
+
+most challenging constraint and it greatly influences the design and implementation of 
+
+wireless sensor nodes. 
+
+  
+
+ 
+
+ 
+
+5
+
+1.2.2  Cost   
+
+Widespread deployment of wireless sensor networks is only feasible if the cost of the 
+
+sensor nodes is negligible, i.e. the electronics are disposable.  This translates to a target 
+
+price of less than $1 per node.    However, today’s commercial wireless sensor nodes are 
+
+priced at much more than $1 per node [Crossbow, Moteiv, Dust].  To further understand 
+
+the  reasons  behind  the  high  cost,  consider  the  implementation  of  a  state-of-the-art 
+
+wireless sensor node [Moteiv] as shown in Fig. 1.3.   
+
+ 
+Fig. 1.3: Telos Node: (top) front side, (bottom) back side of the node. 
+
+ 
+
+6
+
+As shown in Fig. 1.3, the sensor node consists of many ICs: radio, micro-controller, 
+
+USB controller, crystal oscillator, flash memory, etc.  In addition, these ICs require many 
+
+other  external  components  (e.g.  capacitors,  resistors, 
+
+inductors).  Clearly, 
+
+this 
+
+implementation does not yield the lowest cost solution.   Achieving the target node price 
+
+requires (1) using lowest cost chip fabrication, packaging and assembling technologies, 
+
+(2)  high  integration  to  minimize  the  number  of  components  and  chips,  (3)  using 
+
+inexpensive  external  components  if  they  are  unavoidable,  (4)  small  die  area,  (5)  large 
+
+volume production to benefit from the economics of scale, and (6) high manufacturing 
+
+yield. 
+
+ 
+
+1. Single Chip Solution 
+
+To achieve a low system cost, the digital, analog and RF circuitry should be integrated 
+
+onto a single die.  Amongst today’s chip fabrication technologies, deep submicron CMOS 
+
+process  offers  the  highest  integration  at  the  lowest  cost.    Deep  submicron  CMOS 
+
+transistors are fast enough to implement RF circuits and they offer the highest density 
+
+digital circuits.       
+
+However, the submicron CMOS process also has its disadvantages.  One key issue is its 
+
+high leakage power.  Since a sensor node is  heavily duty-cycled, it spends most of its 
+
+time  in  the  sleep  state,  resulting  in  a  high  leakage  power.    To  reduce  leakage  power, 
+
+leakage reduction techniques such as high threshold voltage transistors, stacked devices, 
+
+back-gate biasing and power supply gating can be employed [Borkar04].  However, these 
+
+techniques lead to a higher cost and complexity.   
+
+ 
+
+7
+
+Submicron CMOS process also gives rise to new challenges in analog/RF circuit design 
+
+[Yue05].  Its low supply voltage limits the available voltage headroom in analog circuits 
+
+and  reduces  the  dynamic  range  of  A/D  converters.    Submicron  MOSFET  has  lower 
+
+intrinsic gain, poorer matching characteristics and higher 1/f and thermal noise.  Its thin 
+
+gate oxide also reduces the ESD design window of ESD protecting circuits [Mergens05].   
+
+One key challenge in fully integrated mixed signal IC is the isolation between circuit 
+
+blocks  [Yue05].    The  low  resistive  silicon  substrate  limits  the  isolation  between  the 
+
+digital and analog/RF circuits and results in coupling of digital noise to sensitive analog 
+
+and  RF  circuits.    Noise  coupling  also  occurs  through  the  supply,  ground,  package  and 
+
+bond wires.  To mitigate these unwanted effects, techniques such as differential topology 
+
+to reject common mode noise, short bond wires to minimize inter-wire coupling, separate 
+
+supply and ground for critical blocks to eliminate supply noise coupling, and guard rings 
+
+and separate well to isolate sensitive blocks can be employed.  Again these techniques 
+
+require higher power consumption, die area, cost, complexity and more package pins.  
+
+ 
+
+2. Integration of Off-chip Components 
+
+To reduce the bill of materials, it is essential to integrate as many external components 
+
+as possible onto the silicon IC.  Examples of such components are inductors, capacitors 
+
+and  TX/RX  switch.    Due  to  the  finite  density  of  on-chip  capacitor,  up  to  10’s  pF  of 
+
+capacitance  can  be  integrated  on-chip  with  a  reasonable  die  area.    Higher  density 
+
+capacitance  with  lower  parasitic  can  be  obtained  with  special  process  options  but  at  a 
+
+higher wafer cost.  The insertion loss of an integrated TX/RX switch is much higher than 
+
+ 
+
+8
+
+its  off-chip  counterpart,  resulting  in  poorer  noise  figure  and  higher  power  dissipation.  
+
+Fortunately, the capacitance density of on-chip capacitor and on-resistance of MOSFET 
+
+transistor improve as CMOS technology scales. 
+
+While  the  size  of  digital  circuits  and  on-chip  capacitors  benefits  from  technology 
+
+scaling, on-chip inductors do not.  Generally, the size of an (on-chip) inductor increases 
+
+with the value of inductance. Hence transceiver architectures/circuits that require fewer 
+
+inductors and smaller inductance are preferred to achieve a  small die size.   However, 
+
+there  exists  inherent  tradeoffs  between  the  inductance  required,  power  dissipation  and 
+
+carrier frequency.  From antenna theory, the effective antenna capture area is inversely 
+
+proportional to the square of the frequency f [Balanis97].  Hence, for the same receiver 
+
+sensitivity, a higher carrier frequency requires a higher transmit power to maintain the 
+
+same signal-to-noise ratio.  Also, the power consumption of the circuits increases as the 
+
+carrier  frequency  increases.    Hence,  from  the  power  perspective,  a  lower  carrier 
+
+frequency  is  desirable.    However,  the  inductance  needed  to  resonate  with  a  given 
+
+1
+capacitance C is given as  (
+) Cf
+2
+π
+
+2
+
+.  Table 1.2 shows the inductance needed to resonate 
+
+with 1pF of capacitance at various ISM bands. It shows that a higher operating frequency 
+
+requires smaller inductance, but at the expense of a higher radiated power.  Considering 
+
+that a transceiver typically requires a few inductors (e.g. in matching networks and LC 
+
+tanks), the maximum area per inductor is limited to about 500x500 µm2 for a reasonable 
+
+die  size.    This  translates  to  a  maximum  inductance  of  ~  10nH.    Given  the  trade-offs 
+
+between  power  consumption,  die  size  and  feasibility  of  inductor  integration,  a  good 
+
+compromise is to operate at the 2.4 GHz ISM band.  The 2.4 GHz band also has another 
+
+ 
+
+9
+
+advantage  of  being  an  ISM  band  in  many  countries  (US,  Europe,  Japan,  China,  etc), 
+
+which maximizes the portability of the wireless sensor nodes.     
+
+Table 1.2: Inductor integration and power consumption tradeoffs 
+
+   ISM frequency, f 
+
+Inductance needed to resonate 
+with 1pF of capacitance (nH) 
+
+P
+rad
+
+P
+rad
+
+,
+
+min
+
+at
+freq
+,
+min
+fat
+915
+=
+
+f
+MHz
+
+  
+
+915 MHz 
+
+2.4 GHz 
+
+5.2 GHz 
+
+30 
+
+4.4 
+
+0.94 
+
+1 
+
+7 
+
+32 
+
+ 
+Another key limitation of on-chip inductor is its low Q-factor. An on-chip inductor in a 
+
+standard digital submicron CMOS process typically has a low Q-factor of about 5 to 8 
+
+[Niknejad98].  This limits the performance of RF circuits and results in higher losses in 
+
+matching networks and LC tanks.  Adding thick metals layers improve the Q-factor to 
+
+about  15  to  20  but  at  the  expense  of  a  higher  wafer  cost.    Alternatively,  bond  wires, 
+
+which have Q-factor ~30 to 40, can be used for small inductances but they have higher 
+
+manufacturing variations and are more susceptible to noise coupling from adjacent bond 
+
+wires.          
+
+       
+
+1.2.3  Form Factor 
+
+For a seamless integration of sensor nodes into our physical environment, the node size 
+
+should be less than 1cm3.  The size of today’s sensor nodes (see Fig 1.2) are about 30 
+
+cm3.    This  large  form  factor  makes  it  infeasible  to  embed  sensor  nodes  in  many 
+
+applications  (e.g.  in  clothing),  thus  limiting  the  full  potential  of  ambient  intelligence.   
+
+ 
+
+10
+
+The  size  of  a  sensor  node  is  mainly  determined  by  (1)  size  of  energy  storage  and/or 
+
+energy scavenging device, (2) antenna dimensions and (3) footprints of its components.  
+
+The  size  of  the  energy  storage  or  energy  scavenging  device  depends  on  its  energy 
+
+density and the node’s average power consumption.  Although the power density of the 
+
+energy sources has improved over the last few years, shrinking the node size still requires 
+
+aggressive reduction of the average power consumption.  As discussed, the node’s power 
+
+consumption trades off with its operating frequency, degree of integration and cost.  In 
+
+today’s  sensor  nodes,  the  node  size  is  dominated  by  the  energy  source  as  the  average 
+
+power  consumption  is  much  higher  than  the  threshold  of  100µW  to  enable  energy 
+
+scavenging. 
+
+The antenna also occupies a significant area/volume of the node.  An efficient antenna 
+
+requires  dimensions  in  the  order  of  λ/4  to  λ/2,  where  λ  is  the  operating  wavelength.  
+
+Hence, there exists an inherent trade off between antenna efficiency, antenna size, power 
+
+consumption  and  operating  frequency.    At  2.4  GHz,  λ/4  ≈  3cm  and  hence  on-chip 
+
+antenna is not feasible.  To reduce cost, printed antennas on PCB can be employed.      
+
+At low integration levels, the size and number of external components can also take up 
+
+a large percentage of the area/volume of the node.  Thus, a high degree of integration is 
+
+crucial to both cost and size reduction.  If external components are absolutely needed, 
+
+low profile, small footprints components are preferred.   
+
+ 
+
+ 
+
+ 
+
+11
+
+1.3   The Need for High Performance Transmitters in WSN 
+
+Between  sensing,  computational  and  communication,  the  power  consumption  needed 
+
+for  communication  typically  dominates  node’s  power  budget.    To  overcome  this 
+
+bottleneck, it is crucial to reduce the transceiver’s power dissipation.  Table 1.3 shows a 
+
+breakdown of the current consumption of a state-of-the-art sensor node [Moteiv] when 
+
+active.   It shows that power consumption of the transmitter and receiver when active is 
+
+about the same.  While techniques for reducing the receiver’s power consumption have 
+
+been discussed in [Otis05a, Molnar04], the research in this thesis focuses on reducing the 
+
+transmitter’s power consumption.   
+
+Table 1.3: Nominal current consumption of a state-of-the-art sensor node when active 
+
+  Components 
+
+Active current consumption (mA) 
+
+Condition 
+
+Transmitter 
+
+Receiver 
+
+Microprocessor 
+
+Sensors 
+
+Voltage regulator 
+
+  
+
+17.4 
+
+19.7 
+
+0.5 
+
+< 0.03 
+
+0.02 
+
+0 dBm output power 
+
+-94 dBm RX sensitivity 
+
+3V supply, 1MHz clock 
+
+- 
+
+- 
+
+1.4  Transmitter Requirements  
+
+The main functions of a WSN transmitter are to: (1) modulate the baseband data onto a 
+
+RF carrier, (2) amplify the modulated signal, and (3) provide matching to the antenna for 
+
+efficient  power  delivery  to  free  space.    In  this  section,  the  requirements  of  WSN 
+
+transmitter are delineated. 
+
+ 
+
+12
+
+1.4.1      Radiated Power 
+
+The minimum radiated power Prad,min needed for communication between two nodes  is 
+
+governed by the link budget, which is given as 
+
+ 
+
+P
+rad
+
+,
+
+min
+
+=
+
+
+
+f
+
+4π
+c
+
+2
+
+•
+
+
+
+
+
+
+d
+n
+GG
+
+t
+
+r
+
+
+•
+
+
+R
+
+sens
+
+•
+
+LF
+
+, 
+
+(1.1) 
+
+where f is the operating frequency, d is the distance between two nodes, Gr and Gt are the 
+
+antenna gain of the receiver’s and transmitter’s antennas respectively, Rsens is the receiver 
+
+sensitivity, c is the speed of light, n is the path loss exponent and LF is the loss factor 
+
+accounting for other losses (e.g. matching, cable loss, etc). 
+
+For WSN applications, an isotropic antenna (Gr and Gt, = 1) is desired as the relative 
+
+orientation  between  sensors  nodes  are  not  predetermined.    Also,  multi-path  is  more 
+
+severe in indoor environment and the path loss exponent n is typically between 3 and 4 
+
+[Rappaport02].    For  a  range  of  about  10m,  a  2.4GHz  communication  system  requires 
+
+about 0 dBm of transmit power [Rabaey02, 802.15.4].           
+
+ 
+
+1.4.2  Efficiency 
+
+With power consumption being the biggest obstacle in large scale deployment of WSN, 
+
+one  of  the  most  important  performance  metrics  of  a  WSN  transmitter  is  its  efficiency.  
+
+Figure 1.4 shows average transmitter power consumption as a function of its efficiency 
+
+for  various  duty  cycles  when  radiating  0  dBm.    If  the  transmitter  power  consumption 
+
+accounts for up to 20% of the 100µW power budget, the transmitter has to be at least 
+
+ 
+
+13
+
+25%  and  50%  efficient  for  a  0.5%  and  1%  duty  cycle  respectively.    For  a  given 
+
+transmitter  power  budget,  a  higher  duty  cycle  demands  a  higher  transmitter  efficiency 
+
+since the transmitter remains active for a longer period of time. 
+
+)
+
+W
+µ
+(
+ 
+
+n
+o
+
+i
+t
+
+p
+m
+u
+s
+n
+o
+C
+
+ 
+
+ 
+r
+e
+w
+o
+P
+X
+T
+e
+g
+a
+r
+e
+v
+A
+
+ 
+
+100
+
+90
+
+80
+
+70
+
+60
+
+50
+
+40
+
+30
+
+20
+
+10
+
+0
+
+0
+
+10
+
+20
+
+30
+
+ 0.5% Duty Cycle
+ 1% Duty Cycle
+
+40
+
+50
+
+70
+TX Efficiency (%)
+
+60
+
+80
+
+90 100 110
+
+ 
+
+Fig. 1.4: Average TX power consumption as a function of its efficiency. 
+
+ 
+ 
+
+1.4.3  Integration 
+
+To reduce the system cost, the antenna matching network has to be integrated on-chip 
+
+to achieve a single chip solution.  However, on-chip inductors have low Q-factors and 
+
+thus, results significant matching network loss. Also, these inductors occupy significant 
+
+die  area.    Hence,  there  is  a  tradeoff  between  reducing  the  bill  of  materials,  power 
+
+consumption and die area.             
+
+ 
+
+14
+
+Integrating the low power amplifier and frequency generation circuit on the same die 
+
+can potentially cause local oscillator (LO) pulling [Razavi98].  The output power from 
+
+the power amplifier can coupled to the LO through the substrate, package or bond wires 
+
+and shift the frequency of the LO, causing spectrum re-growth.    Thus, careful layout and 
+
+package  pins  assignment  to  isolate  the  power  amplifier  and  oscillator  should  be 
+
+employed.   
+
+ 
+
+1.4.4      Data Throughput 
+
+In  typically  deployment  scenarios,  the  parameters  of  interest  (e.g.  temperature, 
+
+humidity, pressure) vary relatively slowly with time.  Hence, sensor data only need to be 
+
+acquired periodically at a relatively low rate (e.g. once per second) or when triggered by 
+
+an occasional external events.  In addition, the packet size is usually less than 1000 bits.  
+
+With data rates of 10’s to 100’s kbps, this translates to a duty cycle of ~ 0.1% to 10%. 
+
+ 
+
+1.5  State-of-the-Art  
+
+There already exist some efforts to overcome the challenges in designing low cost, high 
+
+efficiency and small form factor transmitters for WSN applications.  These transmitters 
+
+either  adapt  existing  transmitter  architectures  that  work  well  for  WLAN  and  cellular 
+
+transceiver to WSN applications or utilize the inherent characteristics of WSN to reduce 
+
+its complexity and power consumption.  In this section, two of these state-of-the-art WSN 
+
+transmitters are reviewed.      
+
+ 
+
+15
+
+1.5.1  Direct Conversion Transmitter 
+
+The block diagram of a direct conversion transmitter is shown in Fig. 1.5.  It uses two 
+
+mixers to up convert the baseband signal to the RF band with a pair of quadrature LO 
+
+signals.  This solution is very versatile as it supports any modulation scheme.  However, 
+
+it requires more circuit blocks (mixers and quadrature LO generator, low pass filters, etc), 
+
+which results in a high overhead power and low transmitter efficiency.   
+
+ 
+
+Digital 
+
+Modulator 
+
+DAC 
+
+LPF 
+
+Frequency 
+Synthesizer
+
+LPF 
+
+DAC 
+
+ 
+
+Mixer
+
+0°
+
+ 
+90°
+ 
+
+ 
+
+Mixer
+
++
+
+Low Power 
+Amplifier 
+
+Matching 
+Network 
+
+Antenna
+
+Fig 1.5: Block diagram of a direct conversion transmitter. 
+
+ 
+An example of a WSN transmitter that uses this architecture is described in [Choi03].  
+
+The author implemented a 2.4 GHz direct conversion transmitter for WSN in a 0.18µm 
+
+CMOS process.  The transmitter consumes 30mW while delivering 0 dBm to the antenna, 
+
+resulting in an overall transmitter efficiency of only 3.3%.  A breakdown of the power 
+
+consumption when active is shown in Fig. 1.6.  It shows that the low efficiency is due to 
+
+the low power amplifier efficiency and high power consumption by all the stages prior to 
+
+the  power  amplifier.    In  addition,  the  phase-lock  loop  in  the  frequency  synthesizer 
+
+requires a long settling time of 150µs, incurring a high overhead power.  The transmitter 
+
+ 
+
+16
+
+uses  an  off-chip  antenna  matching  network  and  supports  a  data  rate  of  250kbps  with 
+
+GMSK modulation.    
+
+ 
+
+ 
+
+ 
+
+ 
+
+Total: 30mW 
+
+Efficiency = 3.3% 
+
+Power Amplifier: 
+14.4mW (48%) 
+
+ 
+
+Frequency Synthesizer: 
+
+12mW (40%) 
+
+Modulator+DAC: 
+
+0.54mW (2%) 
+
+Mixer:  
+
+3.06mW (10%) 
+
+Fig 1.6: Power breakdown of direct conversion transmitter in [Choi03]. 
+
+1.5.2  Direct Modulation Transmitter 
+
+ 
+
+Taking  advantage  of  the  low  data  rate  requirement  for  WSN  applications,  simpler 
+
+modulation schemes such as on-off keying (OOK) or frequency shift keying (FSK) can 
+
+be employed at the expense of spectral efficiency.  These simpler modulation schemes 
+
+allow the use of the less complex direct modulation transmitter as shown in Fig. 1.7.   
+
+ 
+
+ 
+ 
+
+Baseband data 
+
+Local 
+
+Oscillator 
+
+Low Power 
+Amplifier 
+
+ 
+
+Matching 
+Network 
+
+Antenna 
+
+Fig 1.7: Block diagram of the direct modulation transmitter. 
+
+In  the  direct  modulation  transmitter,  the  baseband  data  directly  modulates  the  local 
+
+oscillator.    FSK  is  achieved  by  modulating  the  frequency  of  the  LO,  while  OOK  is 
+
+ 
+
+17
+
+accomplished by power cycling the transmitter.   The direct modulation transmitter uses 
+
+fewer circuit blocks and hence incurs less overhead power.   
+
+In  the  WSN  transceiver  described  in  [Molnar04],  the  author  employs  the  direct 
+
+modulation  transmitter  architecture.    The  900MHz  FSK  transmitter  consumes  1.3mW 
+
+while  radiating  250µW.    In  the  transmitter,  the  author  stacked  the  output  devices  to 
+
+provide  for  better  antenna  matching  and  achieve  a  power  amplifier  efficiency  of  40%.  
+
+However, the high power consumption the LO (accounts for 55% of the power budget) 
+
+degrades  the  overall  efficiency  to  only  19%.    The  transmitter  could  deliver  0  dBm  by 
+
+operating the two stacked power amplifiers in parallel and combining their output power, 
+
+resulting in an overall transmitter efficiency of 13%.  The transmitter supports a data rate 
+
+of 100kbps and requires 1 external inductor.     
+
+ 
+
+1.6    Contributions and Scope of this Thesis 
+
+The  previous  sections  have  discussed  the  three  main  challenges  in  widespread 
+
+deployment of wireless sensor networks: (1) node’s average power consumption has to be 
+
+less than 100µW for a long usage life time, (2) node’s cost has to be less than $1 for a 
+
+reasonable system cost and (3) node’s volume has to be less than 1cm3 for a seamless 
+
+integration with our environment.  The power consumption of today’s sensor nodes far 
+
+exceeds  the  threshold  of  100µW,  mainly  due  to  the  high  power  consumption  need  for 
+
+communication  between  nodes.    With  the  transmitter  accounting  for  about  half  the 
+
+communication power budget when active, it is important to have a highly integrated and 
+
+efficient 
+
+transmitter  with  a  fast  start-up 
+
+time 
+
+to  reduce  power  consumption.  
+
+ 
+
+18
+
+Unfortunately, none of the state-of-the art transmitters meets the stringent requirements 
+
+of a WSN transmitter.   
+
+This  thesis  focuses  on  providing  a  solution  to  this  problem.    It  contributes  to  the 
+
+advancement of transmitter design for wireless sensor network in three major thrusts: 
+
+ 
+
+1.  Establish the principles and techniques of a high performance WSN transmitter. 
+
+Traditional  transmitter  design  in  cellular  and  WLAN  applications  focuses  mainly  on 
+
+improving the power amplifier’s efficiency to boost the overall efficiency.  However, the 
+
+radiated  power  in  WSN  is  low  and  these  transmitters  perform  poorly  when  adapted  to 
+
+WSN  applications  due  to  their  high  overhead  power  and  long  settling  time.    Thus, 
+
+achieving  a  high  performance  WSN  transmitter  requires  rethinking  of  the  transmitter 
+
+design principles and techniques.   
+
+Considering  the  unique  requirements  and  operating  environment  of  WSN,  the  main 
+
+design  principles  to  achieve  a  high  performance  WSN  transmitter  are  established:  (1) 
+
+minimize overhead power, (2) maximize circuit efficiency, (3) minimize active time, and 
+
+(4) radiate the minimum power need for communication. Based on these principles, low 
+
+power  design  techniques  at  the  system,  circuit  and  technology  levels  are  investigated.  
+
+Adhering to these design principles and techniques result in a high efficiency, low power, 
+
+low cost and small form factor transmitter.   
+
+ 
+
+ 
+
+ 
+
+19
+
+2.  Push the performance envelope of WSN transmitters.  
+
+To demonstrate the effectiveness of these low power design principles and techniques, 
+
+three  different  1.9  GHz 
+
+transmitters  are  designed  and 
+
+implemented 
+
+in  ST 
+
+Microelectronics  0.13µm  digital  CMOS  process.    The  first  transmitter  is  based  on  the 
+
+direct modulation architecture It employs a MEMS resonator (FBAR) and the transmit 
+
+chain is co-designed together to achieve an efficiency of 23% while transmitting 0.5mW. 
+
+The  transmitter  supports  a  maximum  data  rate  of  83kbps.    The  second  transmitter 
+
+employs  injection  locking  to  reduce  the  FBAR  oscillator  power  further,  improving  the 
+
+efficiency  to  28%  while  delivering  1mW  and  increasing  the  data  rate  to  156kbps.  The 
+
+third transmitter incorporates the antenna into the power amplifier design to eliminate the 
+
+matching network, boosting the efficiency to 46% while radiating 1.2mW.  It uses dual 
+
+amplifiers during oscillator startup, improving the data rate to 330kbps.  The performance 
+
+of these transmitters compare favorably to the state-of-the-art as shown in Fig 1.8. 
+
+The improvements in TX efficiency and data rate lead to a reduction of the transmitter 
+
+average power consumption PTX,ave.  Table 1.4 shows the PTX,ave for a typical WSN traffic 
+
+load of 1 pkt/sec with 1000 bits/pkt, assuming that data has an equal probability of ‘1’ 
+
+and ‘0’.   It shows that PTX,ave of the transmitters in [Choi03], [CC2420], [CC1000] and 
+
+[TR1000]  exceed  the  threshold  of  100µW  for  an  energy  self-sufficient  node.    The 
+
+transmitter in [Cho04] consumes 72% of the entire node’s power budget, leaving little 
+
+room for other circuitry.  On the other hand, the transmitters reported in this thesis and 
+
+[Molnar04] consume less than 13% of the power budget, making them suitable for WSN 
+
+applications.  In particular, the active antenna transmitter has the lowest PTX,ave of 4µW.       
+
+ 
+
+20
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+50
+
+40
+
+30
+
+20
+
+10
+
+)
+
+%
+
+(
+ 
+y
+c
+n
+e
+c
+i
+f
+f
+
+i
+
+ 
+
+E
+X
+T
+
+0
+
+10
+
+ 2.4 GHz
+ 1.9GHz
+ 0.9 GHz
+
+Active antenna TX 
+
+Injection-locked TX
+
+Direct modulation TX 
+
+ 
+
+This 
+Work 
+
+Molnar04 
+
+ 
+
+ 
+TR1000  CC1000 
+ 
+
+Choi03, 
+CC2420
+
+100
+ 
+
+Data Rate (kbps)
+
+Cho04 
+
+1000
+
+Fig 1.8: Performance of state-of-the-art WSN transmitters. 
+
+ 
+
+Table 1.4: Average TX power PTX,ave for traffic load of 1 pkt/sec, 1000 bits/pkt 
+
+  Transmitter 
+
+Modulation  Standard 
+
+Prad (mW) 
+
+PTX,ave (µW) 
+
+Active antenna TX 
+
+Injection-locked TX 
+
+Direct modulation TX  
+
+[Molnar04] 
+
+[Cho04] 
+
+[Choi03] 
+
+[CC2420] 
+
+[CC1000] 
+
+OOK 
+
+OOK 
+
+OOK 
+
+FSK 
+
+GFSK 
+GMSK* 
+
+Propriety 
+
+Propriety 
+
+Propriety 
+
+Propriety 
+
+Bluetooth 
+
+802.15.4 
+
+OQPSK 
+
+802.15.4 
+
+FSK 
+
+Propriety 
+
+1.2 
+
+1 
+
+0.5 
+
+0.25 
+
+1 
+
+1 
+
+1 
+
+1 
+
+[TR1000] 
+Prad : Radiated power; *Experimental work targeted for 802.15.4 
+
+Propriety 
+
+OOK 
+
+1.4 
+
+ 
+
+21
+
+4 
+
+11 
+
+13 
+
+13 
+
+72 
+
+120 
+
+129 
+
+651 
+
+870 
+
+3.  Demonstrate a fully functional transmit sensor node.  
+
+As a proof of concept of a low power, low cost and small form factor sensor node, the 
+
+active antenna transmitter is integrated into a wireless transmit sensor node.  The 38 x 25 
+
+x  8.5  mm3  sensor  node  runs  on  two  small  rechargeable  batteries  and  it  has  power 
+
+conversion circuits, a low power microcontroller, an active antenna transmitter, a printed 
+
+antenna and three sensors to measure temperature, humidity, tilt and acceleration.  In this 
+
+design, the batteries are recharged from solar cells but it can be adapted to operate with 
+
+other energy scavenging sources. 
+
+ 
+
+The remaining parts of the thesis elaborate on these contributions and are organized as 
+
+follows.  Chapter 2 explains the principles and design techniques to achieve a low power, 
+
+low  cost  and  small  size  WSN  transmitter.    Based  on  these  principles  and  design 
+
+techniques,  three  different  transmitters  are  designed  and  implemented.    In  chapter  3,  a 
+
+direct modulation transmitter utilizing RF MEMS is presented.  In this transmitter, the 
+
+oscillator  and  low  power  amplifier  are  co-designed  together  for  optimal  efficiency.  
+
+Chapter 4 introduces the use of injection locking technique to reduce the overhead power 
+
+to further enhance the efficiency and increase the data rate.  In chapter 5, the antenna is 
+
+incorporated  into  the  power  amplifier  to  eliminate  the  matching  network  and  its  loss, 
+
+further improving the performance of the transmitter.  Dual amplifiers are also employed 
+
+during startup to boost the data rate further.  Chapter 6 describes the design of a highly 
+
+integrated  low  power,  low  cost  and  small  form  factor  energy  self-sufficient  transmit 
+
+sensor node.   
+
+ 
+
+22
+
+ 
+ 
+ 
+Chapter 2 
+ 
+Energy Efficient Transmitter Design 
+
+ 
+ 
+ 
+ 
+2.1  Design Principles 
+ 
+
+Consider  modeling  a  transmitter  as  a  power  amplifier  (PA)  providing  power 
+
+amplification,  an  output  network  matching  the  antenna  to  the  PA  and  a  pre-PA  block 
+
+accounting for all the stages prior to the PA (pre-PA stages) that perform data modulation 
+
+and carrier generation as shown in Fig. 2.1. 
+
+Baseband data
+
+ 
+
+ 
+
+Pre-PA stages 
+
+Power 
+ 
+amplifier
+
+Matching 
+network 
+
+Antenna 
+
+Fig. 2.1: Model of a wireless transmitter. 
+
+The average power consumption of the transmitter PTX,ave is given as: 
+
+T
+
+setup
+
+[
+P
+Pr
+
+•
+
++
+
+P
+PA
+
+,
+
+inactive
+
+e
+
+−
+
+PA
+
+]
+
++
+
+T
+transmit
+
+•
+
+P
+TX
+
+,
+
+ave
+
+=
+
+ 
+
+ 
+
+T
+data
+
+23
+
+P
+Pr
+
+e
+
+−
+
+PA
+
++
+
+
+
+
+
+P
+rad
+ηη
+•
+
+d
+
+MN
+
+
+
+
+
+,  (2.1) 
+
+where Tsetup is the transmitter setup time, Ttransmit is the data transmission time, Tdata is the 
+
+duration  between  data  packets,  PPA,inactive  is  the  PA  power  consumption  when  it  is  not 
+
+transmitting, PPre-PA is the power consumption of the pre-PA stages, Prad is the radiated 
+
+power,  ηd  is  the  PA  drain  efficiency  and  ηMN  is  the  matching  network  efficiency.  
+
+Certainly, a lower packet rate or packet size reduces the average power consumption but 
+
+they are usually determined by non-transmitter related factors such as the MAC protocol, 
+
+synchronization header, error correction bits, payload and allowable latency.  Thus, for a 
+
+given  packet  size  and  packet  rate,  minimizing  the  transmitter  energy  consumption 
+
+requires:  
+
+1.  minimizing the overhead power: PPre-PA and PPA,inactive, 
+
+2.  minimizing losses in the power amplifier’s device and matching network,  
+
+3.  minimizing the duration which the transmitter is active: Tsetup and Ttransmit 
+
+4.  radiating the minimum power required for the communication link: Prad 
+
+Adhering to these design principles leads to an energy efficient transmitter.  Though 
+
+these principles are universal to all transmitters, their relative importance is different for a 
+
+WSN transmitter compared to cellular/WLAN transmitters due to different requirements.  
+
+In  cellular/WLAN  applications,  the  radiated  power  is  much  higher  than  then  circuit 
+
+power  and  hence  the  transmitter’s  power  consumption  is  dominated  by  the  power 
+
+amplifier.  On the other hand, the WSN transmitter requires lower radiated power due to 
+
+shorter communication distance, lower power consumption to enable energy scavenging, 
+
+lower data rate and faster wake up time.  These unique requirements require re-thinking 
+
+ 
+
+24
+
+of the design methodology, transmitter architectures, circuit techniques and new enabling 
+
+technologies to achieve an ultra low power and low cost WSN transmitter. 
+
+  
+
+2.2  Design Considerations 
+
+2.2.1  Design Methodology 
+
+In cellular and WLAN applications, Prad is large (~ 100’s of milliwatts to 1 watt).  Thus 
+
+Prad  >>  PPre-PA  and  PA  efficiency  dominates  the  transmitter  efficiency.  Hence,  the 
+
+research efforts mainly focus on improving the PA efficiency and techniques to obtain 
+
+high efficiency at large power back off (e.g. when operating close to the access point or 
+
+base  station)  to  achieve  low  transmitter  power  dissipation.    However,  in  WSN 
+
+applications,  Prad  is  much  smaller  (~1mW)  due  to  a  shorter  communication  distance.  
+
+Since  PPre-PA  is  independent  on  the  communication  range,  it  becomes  comparable  or 
+
+larger than Prad. When PPre-PA dominates, equation (2.1) becomes 
+
+P
+TX
+
+,
+
+ave
+
+≈
+
+DC
+
+TX
+
+•
+
+P
+Pr
+
+e
+
+−
+
+PA
+
+, 
+
+where DCTX = (Tsetup + Ttransmit)/Tdata is the transmitter duty cycle.  Therefore, reducing 
+
+Prad (e.g. by improving the receiver sensitivity with higher receiver power) or improving 
+
+the PA efficiency no longer gives significant power savings.  This is the main reason for 
+
+the low efficiency in existing transmitters as they all suffer from high PPre-PA.   Hence it is 
+
+critical to first achieve a low PPre-PA for a WSN transmitter.   
+
+When  PPre-PA  power  is  reduced  to  less  than  Prad,  improving  the  PA  efficiency  and 
+
+decreasing Prad using power control techniques become effective in reducing the average 
+
+power  consumption.    However,  a  more  efficient  PA  often  requires  higher  drive 
+
+requirements, which translate to higher PPre-PA.  This makes it challenging to design an 
+
+ 
+
+25
+
+efficient transmitter at low radiated power, since it must have both a high efficiency PA 
+
+and  low  pre-PA  power  simultaneously.    This  requires  optimizing  the  entire  transmit 
+
+chain concurrently, rather than just the power amplifier alone.   
+
+ 
+
+2.2.2  Transmitter Architectures 
+ 
+
+Existing  state-of-the-art  transmitters  suffer  from  low  efficiency  because  of  their  high 
+
+pre-PA  power.  Pre-PA  power  arises  from  the  data  modulation  and  carrier  generation 
+
+circuits.    Thus,  the  most  effective  way  to  reduce  the  pre-PA  power  is  to  employ  a 
+
+transmitter architecture that minimizes the number of pre-PA circuit blocks and their 
+
+power consumption.       
+
+ 
+
+ 
+
+1. Direct Conversion Transmitter 
+
+The direct conversion transmitter, shown in Fig. 2.2, employs two mixers to up convert 
+
+the  baseband  signal  to  the  RF  band  with  a  pair  of  quadrature  LO  signals.    This 
+
+architecture is very versatile as it supports any modulation schemes and very high data 
+
+rates.  However, it requires many circuit blocks with some blocks such as the frequency 
+
+synthesizer and mixers being very power hungry.  This result in high pre-PA power and 
+
+poor  transmitter  efficiency  as  evident  in  the  transmitters  reported  in  [Choi03]  and 
+
+[CC2420], whose efficiencies are only ~3.3%. 
+
+ 
+
+ 
+
+ 
+
+26
+
+ 
+
+Digital 
+
+Modulator 
+
+DAC 
+
+LPF 
+
+Frequency 
+Synthesizer
+
+LPF 
+
+DAC 
+
+Mixer
+ 
+
+0°
+
+ 
+90°
+
+ 
+
+ 
+Mixer
+
++
+
+Low Power 
+Amplifier 
+
+Matching 
+Network 
+
+Antenna
+
+Fig 2.2: Block diagram of the direct conversion transmitter. 
+
+2. Direct Modulation Transmitter 
+
+In WSN applications, the data rate does not need to be very high due to the low data 
+
+throughput.    With  lower  data  rate,  simpler  modulation  schemes  such  as  on-off  keying 
+
+(OOK) and frequency shift keying (FSK) can be employed.  These schemes allow the use 
+
+of the less complex direct modulation transmitter as shown in Fig. 2.3.   
+
+ 
+ 
+
+Baseband data 
+
+Local 
+
+Oscillator 
+
+Low Power 
+ 
+Amplifier 
+
+Matching 
+Network 
+
+Antenna 
+
+Fig. 2.3: Block diagram of the direct modulation transmitter. 
+
+  In  the  direct  modulation  transmitter,  the  baseband  data  directly  modulates  the  local 
+
+oscillator.  This eliminates the power hungry digital modulator, DACs, I/Q mixers and 
+
+I/Q generation circuit, resulting in lower pre-PA power and higher transmitter efficiency. 
+
+FSK is achieved by modulating the frequency of the LO, while OOK is accomplished by 
+
+power  cycling  the  transmitter.      Also,  both  OOK  and  FSK  relax  the  PA  linearity 
+
+ 
+
+27
+
+requirement and allow the use of more efficient PA.  The design and implementation of a 
+
+direct modulation transmitter is discussed in Chapter 3.   
+
+ 
+
+3. Injection Locked Transmitter 
+
+Often, a higher efficiency PA requires higher drive requirements, leading to a higher 
+
+pre-PA  power.    To  achieve  a  better  compromise  between  the  pre-PA  power  and  PA 
+
+efficiency, the injection locked transmitter shown in Fig. 2.4 can be employed. 
+
+ 
+
+Baseband data 
+
+Reference 
+Oscillator 
+
+ 
+ 
+Oscillator 
+ 
+
+Power 
+
+Matching 
+Network 
+
+Antenna 
+
+Fig. 2.4: Block diagram of the injection-locked transmitter. 
+
+ 
+In  the  injection  locked  transmitter,  the  power  amplifier  is  replaced  by  an  efficient 
+
+power  oscillator.  The  power  oscillator  is  self-driven  and  does  not  load  the  reference 
+
+oscillator.  Due  to  its  low  output  tank  Q,  the  power  oscillator  suffers  from  poor  phase 
+
+noise  performance  and  has  an  unstable  RF  carrier.    To  obtain  an  accurate  carrier 
+
+frequency, the power oscillator is locked to a low power reference oscillator.  Baseband 
+
+data is modulated onto the carrier by power cycling the power oscillator for OOK. FSK 
+
+can  be  employed  by  tuning  the  frequency  of  the  local  oscillator.  The  design  and 
+
+implementation of an injection locked transmitter is presented in Chapter 4. 
+
+ 
+
+ 
+
+ 
+
+28
+
+4. Active Antenna Transmitter 
+
+One of the key factors limiting the transmitter efficiency is its matching network loss.  
+
+The  matching  network,  consisting  of  inductors  and  capacitors,  transforms  the  50Ω 
+
+antenna to the optimal impedance that maximizes the PA efficiency.  However, on-chip 
+
+inductors suffer from low Q-factor and have significant power loss.  To overcome this 
+
+problem, the active antenna transmitter shown in Fig. 2.5 can be employed.  
+
+In this architecture, the antenna provides the optimal impedance to the power amplifier 
+
+and the matching network is eliminated.  Thus, no matching network loss is incurred and 
+
+higher efficiency is obtained. FSK is achieved by modulating the frequency of the LO, 
+
+while  OOK  is  accomplished  by  power  cycling  the  transmitter.    The  design  and 
+
+implementation of an active antenna transmitter is described in Chapter 5. 
+
+ 
+ 
+ 
+ 
+Oscillator 
+ 
+
+Local 
+
+Baseband data 
+
+Low Power 
+Amplifier 
+
+Active 
+Antenna 
+
+Fig. 2.5: Block diagram of the active antenna transmitter 
+
+ 
+
+2.2.3  Active Time 
+ 
+
+In wireless sensor network, the transceiver is heavily duty cycled and the transmitter 
+
+has to wake up, transmit the data and then goes back to sleep for a long time before the 
+
+next  data  transmission.    Equation  (2.1)  shows  that  the  average  power  consumption  is 
+
+proportional active time of the transmitter, which comprises of the setup time Tsetup and 
+
+the transmit time Ttransmit.   
+
+ 
+
+29
+
+1. Transmit Time 
+
+For a given packet size and packet rate, the transmit time is inversely proportional to 
+
+the data rate for OOK and FSK modulation.  To maintain the same energy per bit, Prad has 
+
+to increase proportionally as data rate increases (see Fig. 2.6).  On the other hand, PPre-PA 
+
+increases only slightly at higher data rates since the oscillator only need to consume more 
+
+current during start up to reach its steady state faster to support higher data rates and the 
+
+startup  time  is  only  a  small  fraction  (e.g.  10%)  of  the  bit  period.    Hence,  PPre-PA  is 
+
+relatively independent of the data rate as compared to Prad. 
+
+Power 
+
+Prad 
+
+2X Data Rate 
+
+ 
+
+Same energy/bit 
+
+ 
+
+Power 
+
+2*Prad 
+
+ton 
+
+t 
+
+ 
+
+ton/2 
+
+t 
+
+Fig. 2.6: Effect on increasing data rate on transmit power. 
+
+Thus,  the  average  power  consumption  of  the  transmitter  PTX,transmit  during  data 
+
+transmission as a function of data rate can be modeled to the first order as:   
+
+ 
+
+ 
+
+TXP ,
+
+transmit
+
+=
+
+ 
+
+PS
+
+PR
+
+•
+DR
+
+•
+
+
+
+
+
+
+P
+Pr
+
+e
+
+−
+
+PA
+
++
+
+1
+•
+
+ηη
+
+d
+
+MN
+
+P
+rad
+,
+DR
+
+ref
+
+ref
+
+DR
+
+=
+
+PS
+
+•
+
+PR
+
+•
+
+P
+PA
+e
+Pr
+−
+DR
+
+
+
+
+
+
++
+
+1
+•
+
+ηη
+
+d
+
+MN
+
+P
+rad
+,
+DR
+
+ref
+
+ref
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+ 
+
+(2.2) 
+
+where  PS  is  the  packet  size,  PR  is  the  packet  rate,  DR  is  the  data  rate,  Prad,ref  is  the 
+
+reference radiated power when transmitting at the reference data rate DRref to achieve the 
+
+desired signal to noise ratio at the receiver.  Equation (2.2) shows that a higher data rate 
+
+ 
+
+30
+
+decreases the overall power consumption by reducing the duration in which the pre-PA 
+
+stages  stay  active.    With  increasing  data  rate,  the  impact  of  PPre-PA  diminishes  and  the 
+
+transmitter  approaches  its  minimum  achievable  PTX,transmit  given  by  the  second  term  of 
+
+equation  (2.2).    Fig.  2.7  shows  PTX,transmit  as  a  function  of  data  rate  for  various  PPre-PA  
+
+assuming PR = 1 pkt/sec, PS = 500 bits, Prad,ref = 1mW, DRref = 250kbps, ηd = 0.4 and 
+
+ηMN = 0.8. 
+
+ 
+
+100
+
+10
+
+)
+
+W
+µ
+(
+ 
+
+n
+o
+
+i
+t
+
+p
+m
+u
+s
+n
+o
+c
+ 
+r
+e
+w
+o
+p
+
+ 
+t
+i
+
+m
+s
+n
+a
+r
+t
+ 
+
+e
+g
+a
+r
+e
+v
+A
+
+1
+
+0
+
+Pre-PA power (% of ref PA power)
+
+ 0.16 mW (5%)
+ 0.25 mW (8%)
+ 1.60 mW (50%)
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+PTX,transmit when data rate = ∞ or PPre-PA = 
+0
+
+ 
+
+ 
+
+ 
+
+50
+
+100
+150
+Data Rate (kbps)
+
+ 
+
+200
+
+250
+
+Fig. 2.7: Average transmitter power consumption as a function of data rate. 
+
+ 
+
+It shows that increasing the data rate is effective in reducing PTX,transmit when PPre-PA is 
+
+significant. 
+
+  For  example,  when  PPre-PA 
+
+is  50%  of 
+
+the  reference  PA  power 
+
+P
+ref
+L
+,
+ηη
+
+d
+
+MN
+
+(
+
+P
+PA
+
+,
+
+ref
+
+=
+
+ 
+
+), the average power consumption reduces from 86µW to 9µW when the 
+
+31
+
+data rate increases from 10 kbps to 250 kbps.  Further increase in the data rate continues 
+
+to yield a lower power consumption but at a diminishing rate.  With smaller PPre-PA, the 
+
+transmitter enjoys less power savings with increasing data rate. For instance, when PPre-PA 
+
+is 5% of the reference PA power, increasing the data rate higher than 130 kbps does not 
+
+result in significant power savings as PTX,transmit is already within 10% of the minimum 
+
+achievable PTX,transmit.   
+
+Although  increasing  the  data  rate  reduces  the  transmitter  power  consumption,  it  also 
+
+increases  the  power  consumption  in  other  parts  of  the  transceiver.  A  higher  data  rate 
+
+requires  a  tighter  constraint  on  timing  recovery,  channel  equalization  to  combat  inter-
+
+symbol  interference,  higher  A/D  sampling  rate  and  possibly  requiring  more  complex 
+
+modulation schemes to improve spectral efficiency.  All these stricter requirements lead 
+
+to higher complexity and power. Thus, the power savings in the transmitter due to higher 
+
+data rate has to be weighed against the increase in power in other parts of the transceiver.   
+
+ 
+
+Setup time 
+
+The setup time comprises of the transmitter wake up time and turnaround time when 
+
+the transceiver switches from the receiver to the transmitter. Since no data transmission 
+
+occurs during the wake up or turnaround period, these setup times constitute an overhead 
+
+and should therefore be minimized.   
+
+If PPre-PA is significant and the setup time dominates the transmit time, equation (2.1) 
+
+shows that 
+
+P
+TX
+
+,
+
+ave
+
+(
+T
+
+≈
+
+•
+
+P
+Pr
+
+e
+
+−
+
+PA
+
+setup
+
+)
+
+/
+
+T
+data
+
+.  In this case, increasing the data rate does 
+
+not result in power savings since setup time is independent of the data rate.  Thus, it is 
+
+ 
+
+32
+
+crucial to reduce the setup time to be much less than the transmit time.  For example, it 
+
+takes only 1 millisecond to transmit a 200 bits packet with a data rate of 200kbps.  If 10% 
+
+overhead is acceptable, the wakeup time has to be less than 100 µs.  This imposes strict 
+
+requirements in the frequency synthesizer as it typically takes 100’s of microseconds to 
+
+several milliseconds to startup.  To overcome this problem, a RF MEMS based oscillator, 
+
+which requires only a few microseconds to reach its steady state, is used for frequency 
+
+generation  instead.    The  design  and  implementation  of  the  RF  MEMS  oscillator  is 
+
+presented in Chapter 3.       
+
+Another important factor in determining the transmitter setup time is the time needed 
+
+the  circuits  to  reach  their  biasing  points.  For  example,  the  PA  is  ready  for  data 
+
+transmission only after its gate voltage reaches the desired operating bias.  Often, the gate 
+
+of the PA transistor is biased via a large resistor as shown in Fig. 2.8.  This resistance and 
+
+the total capacitance at the gate node determine the time constant for the gate voltage to 
+
+reach its steady state.  Thus, it is important to ensure that this time constant is much less 
+
+than the transmit time. 
+
+Input RF signal
+
+PA device 
+
+ 
+
+Bias voltage 
+
+ 
+
+Fig 2.8: Typical biasing technique for a power amplifier 
+
+ 
+
+ 
+
+33
+
+2.2.4  Power Control 
+
+When two nodes are located close to each other or experience a good channel response 
+
+between them (e.g. line of sight between the two nodes), Prad can be reduced.   Equation 
+
+(2.1) shows that power control is effective in reducing the average power consumption 
+
+only  when  PPre-PA  <<  Prad.    Power  control  can  be  achieved  by  changing  the  (1)  bias 
+
+current  of  the  power  amplifier,  (2)  the  supply  voltage  of  the  power  amplifier,  (3)  the 
+
+impedance  transformation  ratio  of  the  matching  network  or  (4)  combining  the  output 
+
+power from multiple devices.  
+
+     
+
+2.3  Low Power Circuit Techniques  
+
+2.3.1  Subthreshold MOSFET Operation 
+
+With  technology  scaling,  the  transit  frequency  fT  of  today’s  submicron  CMOS 
+
+transistors  exceeds  100  GHz.    This  made  it  possible  to  design  GHz  circuits  using 
+
+MOSFET  operating  in  the  subthreshold  regime,  which  has  higher  transconductance 
+
+efficiency  (gm/Id).    Transconductance  efficiency  is  important  since  the  performance  of 
+
+many analog/RF circuits is related to device gm and a higher gm/Id allows the circuit to 
+
+achieve  the  same  performance  at  lower  power.    Fig.  2.9  shows  the  gm/Id  and  fT  as  a 
+
+function of the inversion coefficient of a submicron NMOS transistor. 
+
+The  inversion  coefficient  IC  measures  the  degree  of  inversion  in  the  channel  of  a 
+
+MOSFET.  It is defined as [Enz95] 
+
+ 
+
+34
+
+ 
+
+IC = 
+
+1
+
+2
+
+VCn
+µ
+ox
+
+2
+th
+
+I
+W
+
+
+
+
+
+
+d
+
+L
+
+
+
+
+
+
+,  
+
+(2.3)   
+
+where  n  is  the  subthreshold  slope  factor,  µ  is  the  electron  mobility,  Cox  is  the  gate 
+
+capacitance per unit area,  Vth = kT/q  is the thermal voltage, W and L are the transistor’s 
+
+width and length  respectively and Id is the MOSFET drain current,.  IC << 1 signifies 
+
+weak  inversion,  IC  ≈  1  represents  moderate  inversion  and  IC  >>  1  indicates  strong 
+
+inversion.   Fig 2.9 shows that as IC decreases, gm/Id increases but fT decreases. A good 
+
+tradeoff  between  gm/Id  and  fT  is  to  operate  the  MOSFET  in  the  moderate  inversion 
+
+regime,  where  the  inversion  coefficient  is  about  1.    Further  decrease  in  the  inversion 
+
+coefficient gives only marginal increase in gm/Id but substantial decrease in fT.   
+
+ 
+ 
+
+ 
+
+ 
+
+2
+2
+10
+10
+
+1
+1
+10
+10
+
+0
+0
+10
+10
+
+D
+D
+
+I
+I
+ 
+ 
+/
+/
+
+m
+m
+g
+g
+
+-1
+-1
+10
+10
+10-4
+10-4
+10-4
+10-4
+
+10-3
+10-3
+10-3
+10-3
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+1011
+1011
+
+1010
+1010
+
+109
+109
+
+)
+)
+z
+z
+H
+H
+
+(
+(
+
+T
+T
+f
+f
+
+108
+108
+
+107
+107
+
+106
+106
+10 3
+10 3
+10 3
+10 3
+
+IC << 1: Weak Inversion
+IC << 1: Weak Inversion
+IC = 1 : Moderate Inversion
+IC = 1 : Moderate Inversion
+IC >> 1: Strong Inversion
+IC >> 1: Strong Inversion
+
+10-2
+10-2
+10-2
+10-2
+
+10-1
+10-1
+10-1
+10-1
+
+Inversion Coefficient
+Inversion Coefficient
+
+10 0
+10 0
+10 0
+10 0
+
+10 1
+10 1
+10 1
+10 1
+
+10 2
+10 2
+10 2
+10 2
+
+Fig. 2.9: gm/Id and fT versus inversion coefficient of a submicron NMOS transistor.   
+
+35
+
+2.3.2  Supply Voltage Reduction 
+ 
+
+For  analog  and  RF  circuits,  decreasing  the  supply  voltage  Vdd  reduces  the  power 
+
+consumption since it is proportional to Vdd.  For digital circuits, the power consumption is 
+
+proportional  to 
+
+2
+
+ddV .    A  lower  Vdd  also  reduces  the  electric  fields  in  the  device  and 
+
+improves its long term reliability.  However, reducing Vdd limits the dynamic range of the 
+
+ADC and reduces the voltage headroom needed for the cascode transistors in analog/RF 
+
+circuits. 
+
+ 
+
+2.4  Enabling Technologies – RF MEMS 
+ 
+
+Recent advances in MEMS technology have made it possible to design and fabricate 
+
+MEMS  devices  that  operate  at  RF  frequency.    RF  MEMS  devices  offer  potential  for 
+
+integration and miniaturization, lower power consumption, lower losses, higher linearity, 
+
+higher  Q-factors  than  conventional  communications  components  [Bouchaud05].    They 
+
+also enable new transceiver’s architectures that are easily reconfigurable and operate over 
+
+a  wide  frequency  range  [Nyguen04].    Examples  of  such  RF  MEMS  devices  are  RF 
+
+MEMS  switches,  BAW  and  micro-mechanical  resonators,  tunable  capacitors,  micro-
+
+machined 
+
+inductors,  micro-machined  antennas,  micro-transmission 
+
+lines,  micro-
+
+mechanical resonators, cavity resonators.   In this research work, the film bulk acoustic 
+
+resonator (FBAR), which is one type of BAW resonator, is employed to overcome some 
+
+of the challenges of WSN transmitters.   
+
+ 
+
+ 
+
+ 
+
+36
+
+2.4.1  FBAR Resonator 
+
+ 
+
+The  FBAR  resonator  [Ruby01]  consists  of  a  thin  layer  of  Aluminum-Nitride 
+
+piezoelectric material sandwiched between two metal electrodes.  The entire structure is 
+
+supported by a micro-machined silicon substrate as shown in Fig. 2.10.  The metal/air 
+
+interfaces serve as excellent reflectors, forming a high Q acoustic resonator.  The FBAR 
+
+has a small form factor and occupies only about 100µm x 100µm.  
+
+Electrodes
+
+Drive Electrode
+
+ 
+
+ 
+
+ 
+
+Si
+
+Air
+AlN
+
+Air
+
+ 
+
+100 µm 
+
+Sense 
+Electrode 
+
+ 
+Si
+ 
+ 
+ 
+
+ 
+
+Fig. 2.10: (Left) structure (right) photograph of a FBAR resonator. 
+
+The FBAR resonator can be modeled using the Modified Butterworth Van Dyke circuit 
+
+as  shown  in  Fig.  2.11  [Larson00].    Lm,  Cm  and  Rm  are  its  motional  inductance, 
+
+capacitance and resistance respectively.  Co models the parasitic parallel plate capacitance 
+
+between  the  two  electrodes  and  Cp1  and  Cp2  accounts  for  the  electrode  to  ground 
+
+capacitances.  Losses in the electrode are given by R0, Rp1 and Rp2.  
+
+ 
+
+ 
+
+Cp1 
+
+Rp
+
+Lm
+
+Cm
+
+Rm
+
+R0
+
+C0
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+Cp2 
+
+Rp
+
+Fig. 2.11 Circuit model of the FBAR resonator. 
+
+37
+
+The  frequency  response  of  the  FBAR  resonator  is  shown  in  Fig.  2.12.    The  FBAR 
+
+behaves  like  a  capacitor  except  at  its  series  and  parallel  resonance.    It  achieves  an 
+
+ 
+
+unloaded Q of more than a 1000.    
+
+(
+ 
+
+e
+c
+n
+a
+d
+e
+p
+m
+
+I
+
+1000
+
+)
+
+Ω
+
+100
+
+10
+
+1
+100M
+
+Parallel 
+resonance 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Series 
+
+resonance 
+
+1G
+ 
+
+Frequency (Hz)
+
+10G
+
+Fig. 2.12 Frequency response of the FBAR resonator. 
+
+ 
+2.4.2  Advantages of FBAR Resonator 
+
+1. High Q factor 
+
+The Q factor of the FBAR resonator is more than 1000, which is much higher than the 
+
+Q-factor of an on-chip LC resonator.  The high Q factor allows implementation of low 
+
+loss  filters  and  duplexers  to  attenuate  the  out  of  band  blockers  and  reject  the  image 
+
+signals.  In some applications, the bandwidth of these FBAR filters is sufficiently small 
+
+for channel filtering, relaxing the linearity requirement of mixers and removing the need 
+
+for  baseband/IF  filters.    The  high  Q  FBAR  resonator  also  substantially  improves 
+
+oscillator’s  phase  noise  and  reduces  its  power  consumption.    It  could  also  potentially 
+
+ 
+
+38
+
+replace  the  traditional  frequency  synthesizer,  resulting  in  substantial  power  savings, 
+
+shorter startup time and RX/TX turnaround time.          
+
+ 
+ 
+ 
+2. CMOS Process Integration 
+ 
+
+The FBAR resonator occupies only 100µm x 100µm, which is smaller than the size of 
+
+an  on-chip  inductor  at  2  GHz.    Unlike  SAW  and  ceramic  resonators,  the  material  and 
+
+fabrication  thermal  budget  of  the  FBAR  resonator  are  compatible  for  CMOS  post 
+
+processing,  making  them  amenable  to  CMOS  integration.    Fig.  2.13  shows  one  such 
+
+monolithic integration where the WCDMA RF front end uses an integrated BAW filter to 
+
+relax the linearity requirements of the mixers [Carpentier05].  The BAW filter consists of 
+
+eight BAW resonators, which are fabricated above the final BiCMOS passivation layer 
+
+and  connected  to  the  integrated  circuit  through  its  top  metal  layer  of  the  IC.        This 
+
+integration  results  in  smaller  form  factor,  lower  power,  greater  reliability  and  higher 
+
+performance circuits.    
+
+LNA 
+
+BAW Filter 
+
+Mixers 
+
+ 
+
+Fig 2.13: Monolithic integration of FBAR with integrated circuits. 
+
+ 
+
+39
+
+3. Circuit/MEMS Co-design 
+ 
+
+With monolithic integration, the physical dimension of the FBAR can be easily tailored 
+
+to  achieve  the  optimal  terminating  impedance  and  frequency  response  for  different 
+
+circuits.  This enables circuits/MEMS co-design to achieve better performance at lower 
+
+power  consumption.    This  is  certainly  advantageous  compared  to  off-chip  SAW  and 
+
+ceramic resonators, which have a 50 Ω terminating impedance and frequency response 
+
+that is pre-determined by the manufacturer.  In addition, off chip resonators are bulky and 
+
+expensive.       
+
+ 
+
+40
+
+ 
+ 
+ 
+Chapter 3 
+ 
+Direct Modulation Transmitter 
+
+ 
+ 
+ 
+ 
+
+At  low  radiated  power,  the  direct  conversion  transmitter  suffers  from  low  efficiency 
+
+due  to  its  high  pre-PA  power.    To  overcome  this  problem,  the  direct  modulation 
+
+transmitter can be employed.  This chapter presents the design and implementation of a 
+
+FBAR-based direct modulation transmitter [Otis05b].  The direct modulation transmitter 
+
+eliminates the I/Q mixers, DACs and digital modulator, and replaces the power hungry 
+
+frequency  synthesizer  with  a  low  power  FBAR  oscillator  to  reduce  the  pre-PA  power. 
+
+The FBAR oscillator is co-designed together with the low power amplifier to optimize 
+
+the entire transmit chain.   
+
+This  chapter  is  organized  as  follows:  the  transmitter  architecture  is  first  introduced, 
+
+followed  by  a  discussion  on  the  design  of  each  individual  circuit  blocks.    Then  the 
+
+implementation and performance of the transmitter are presented.  
+
+ 
+
+3.1  Architecture 
+ 
+
+The block diagram of a direct modulation transmitter is repeated in Fig. 3.1.  
+
+ 
+
+41
+
+ 
+
+ 
+
+Baseband data 
+
+FBAR 
+
+Oscillator 
+
+Low Power 
+Amplifier 
+
+ 
+ 
+
+Matching 
+Network 
+
+Antenna 
+
+Fig. 3.1: Block diagram of FBAR-based direct modulation transmitter. 
+
+The  transmitter  has  only  two  active  circuit  blocks  -  an  FBAR  oscillator  and  a  low 
+
+power amplifier.  With fewer pre-PA circuits than the direct conversion transmitter, it has 
+
+a lower pre-PA power and higher transmitter efficiency.  To reduce the pre-PA power 
+
+further, the power hungry frequency synthesizer is replaced by a FBAR oscillator.  The 
+
+high  Q  FBAR  provides  a  stable  carrier  frequency  at  1.9GHz  at  very  low  power 
+
+consumption.   
+
+  The transmitter employs OOK modulation by using the baseband data to power cycle 
+
+the FBAR oscillator via a foot switch and the low power amplifier through a switch in its 
+
+gate  bias.    This  is  preferred  over  power  cycling  the  supply  as  the  time  to  charge  and 
+
+discharge  the  supply’s  decoupling  cap  is  much  longer,  limiting  the  data  rate.    FSK 
+
+modulation can be employed by modifying the FBAR oscillator into a digitally controlled 
+
+oscillator with a switched capacitor bank. 
+
+Employing  OOK  or  FSK  relaxes  the  PA  linearity  requirement  and  allows  the  use  of 
+
+more efficient switching PA.  However, a switching PA typically requires a higher drive 
+
+requirement, which increases the pre-PA power consumption substantially and degrades 
+
+the  overall  efficiency.    As  such,  a  non-switching  PA  with  lower  drive  requirement  is 
+
+employed.  The FBAR oscillator is co-designed with the low power amplifier to achieve 
+
+the optimal power consumption.   
+
+ 
+
+42
+
+To  match  the  PA  to  the  50  Ω  antenna,  a  capacitive  transformer  is  used  instead  of  a 
+
+conventional  LC  matching  network  to  reduce  loss.  A  short  bond  wire  inductor  is 
+
+employed to resonate with the capacitances at the drain node of the PA device. 
+
+ 
+
+3.2  Low Power FBAR Oscillator  
+
+3.2.1  Low Power Oscillator Design 
+
+In the direct modulation transmitter, the pre-PA circuit consists of only the oscillator 
+
+and  hence,  minimizing  its  power  consumption  is  important.    The  oscillator  can  be 
+
+modeled as an equivalent LC circuit in parallel with a conductance G representing the 
+
+finite  resonator  Q  and  a  negative  conductance  –G  provided  by  the  active  circuits  to 
+
+compensate for the resonator loss (see Fig. 3.2).  Since G is proportional to 1/Q and a 
+
+larger –G requires higher current, a higher Q factor leads to lower power consumption.    
+
+-G 
+
+G 
+
+ 
+
+ 
+
+ 
+
+L 
+
+C 
+
+Fig. 3.2: Model of an oscillator 
+
+The Q-factor of on-chip inductors in standard CMOS process is ~ 5 to 8.  The Q-factor 
+
+is improved 10 to 15 with the use of thick top metal but at a higher cost.  With such low 
+
+Q factors, CMOS LC oscillators have high power consumption and mediocre phase noise 
+
+performance.        On  the  other  hand,  the  Q-factor  of  FBAR  resonator  exceeds  1000 
+
+[Ruby01].  Unlike ceramic and SAW filters, it is small in size and amenable to CMOS 
+
+integration.    Coupled  with  good  circuit  design,  this  leads  to  low  power  and  high 
+
+ 
+
+43
+
+performance oscillators [Chee05a].  
+
+The  schematic  of  the  low  power  FBAR  oscillator  is  shown  in  Fig.  3.3.  The  Pierce 
+
+oscillator  uses  a  CMOS  inverting  amplifier  comprising  of  transistors  M1  and  M2.  The 
+
+FBAR  is  modeled  using  the  modified  Butterworth  Van  Dyke  model  [Larson00]. 
+
+Capacitance C1 and C2 include the capacitances due to the FBAR electrodes, transistors, 
+
+pad and interconnects.  A large resistor Rb is used to bias the gate and drain voltage of the 
+
+transistors at Vdd/2 to maximize the allowable voltage swing and minimize its loading on 
+
+the FBAR.  Transistors M1 and M2 share the same current but their transconductances gm1 
+
+and gm2 sum, reducing the current needed for oscillation by half.  The transistors are also 
+
+designed to operate in the sub-threshold regime to obtain higher current efficiency.   
+
+Vdd 
+
+ 
+ 
+
+FBAR 
+
+C0 
+
+M2 
+
+M1 
+
+Rb 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+R0 
+
+C1 
+
+X 
+
+Y 
+
+C2 
+
+Lm  Cm  Rm 
+
+ 
+
+Fig. 3.3: Schematic of an ultra low power FBAR oscillator. 
+
+Capacitors C1 and C2 transform the amplifier’s transconductance 
+
+g
+
+m
+
+=
+
+g
+
+m
+1
+
++
+
+g
+
+m
+
+2
+
+ into a 
+
+negative  resistance 
+
+−
+
+g
+m
+1
+2
+ω
+
+g
++
+m
+CC
+
+1
+
+2
+
+2
+
+  at  frequency  ω.    Thus,  a  higher  negative  resistance 
+
+ 
+
+44
+
+requires higher current consumption since gm is proportional to the device current.  The 
+
+impedance looking across node X and node Y is the given as [Vittoz88] 
+
+ 
+
+Z
+
+XY
+
+=
+
+ZZ
+1
+Z
+
+1
+
+ZZ
++
+3
+2
+3
+Z
+Z
++
++
+
+2
+
+ZZZg
++
+m
+2
+ZZg
++
+m
+1
+
+1
+
+2
+
+3
+
+3
+
+ 
+
+(3.1) 
+
+where 
+
+Z
+
+1
+
+=
+
+1
+Cj
+ω
+1
+
+, 
+
+Z
+
+2
+
+=
+
+1
+Cj
+ω
+
+2
+
+ and 
+
+Z
+
+=
+
+R
+0
+
++
+
+3
+
+1
+Cj
+ω
+
+0
+
+.  To ensure oscillator startup, the 
+
+Re[ZXY] is typically 2 to 3 times higher than -Rm.  When the output voltage swing grows 
+
+to  a  sufficiently  large  amplitude,  it  pushes  M1  and  M2  into  gain  compression,  which 
+
+reduces gm and Re[ZXY].  Steady state oscillation is achieved when -Rm is equal to the 
+
+large signal Re[ZXY].   
+
+Fig. 3.4 shows a plot of Re[ZXY] as a function of C1 and C2 for gm = 7.8mS, C0 = 1.6 pF 
+
+and R0 = 0.6 Ω. 
+
+)
+
+Ω
+
+(
+ 
+]
+Y
+X
+Z
+
+[
+l
+
+a
+e
+R
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+C2 (pF) 
+
+C1 (pF) 
+
+Fig 3.4: Negative resistance of FBAR oscillator as a function of C1 and C2. 
+
+ 
+
+45
+
+It  shows  that  for  any  given  gm,  there  is  a  pair  of  C1  and  C2  that  minimizes  Re[ZXY] 
+
+when  C1  =  C2.    By  varying  gm,  the  minimum  achievable  Re[ZXY]  is  be  plotted  as  a 
+
+function of gm as shown in Fig. 3.5.  With Rm ~ 0.9Ω and Re[ZXY] chosen to be 3 times -
+
+Rm to ensure startup, a gm of ~ 7.8 mS is needed and the corresponding C1 = C2 = 700 fF.  
+
+With current reuse using complementary devices, the transconductance of each MOSFET 
+
+is 3.9 mS.  For gm/Id = 19, the minimum bias current is ~ 205 µA.   
+
+)
+
+Ω
+
+(
+ 
+]
+
+Y
+X
+Z
+e
+R
+
+[
+
+0.0
+
+-0.5
+
+-1.0
+
+-1.5
+
+-2.0
+
+-2.5
+
+-3.0
+
+-3.5
+
+-4.0
+
+0
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+5
+
+7
+
+3
+
+2
+
+1
+9
+Amplifier transconductance, gm (mS)
+
+6
+
+4
+
+8
+
+10
+
+Fig 3.5: Negative resistance of FBAR oscillator versus amplifier gm. 
+
+3.2.2  Start up time 
+
+ 
+ 
+
+In  the  direct  modulation  transmitter,  the  data  rate  is  determined  by  the  oscillator’s 
+
+startup time.  The startup process of the FBAR oscillator is shown in Fig. 3.6.  It consists 
+
+of three phases [Toki92] describes as follows: 
+
+ 
+
+ 
+
+46
+
+Gain compression 
+
+ 
+
+ 
+
+Oscillator 
+transient 
+response 
+
+VDD 
+gating 
+signal 
+
+ 
+
+Oscillator 
+turns on 
+
+ 
+Exponential 
+
+growth 
+
+ 
+
+ 
+
+ 
+
+Steady state 
+oscillation 
+
+Fig. 3.6:  Measured startup transients of an FBAR oscillator. 
+
+1.  Initial power up.  When the oscillator is powered up, the supply charges the gate of 
+
+the transistors to their biasing voltage through Rb with a time constant τinitial ~ RbC1.  
+
+With Rb = 60 kΩ and C1 = 700 fF, the biasing point can be reached in ~ 3*τinitial. 
+
+(~126  ns).    Smaller  Rb  results  in  a  shorter  τinitial  but  increases  its  loading  on  the 
+
+resonator.  With the FBAR impedance equals to ~ 2 kΩ at parallel resonance, Rb 
+
+loads the resonator by ~ 3%.  
+
+ 
+
+2.  Exponential  growth.    Once  the  operating  point  is  reached,  the  amplifier  acquires 
+
+sufficient  loop  gain  and  the  oscillation  amplitude  builds  up  exponentially  with  a 
+
+time constant τexp = 
+
+−
+
+Re[
+
+Z
+
+L
+
+XY
+
+m
+]
+
+.   A higher Q resonator has a larger Lm and/or 
+
++
+
+R
+
+m
+
+smaller  Rm,  which  leads  to  a  lower  steady  state  power  consumption  but  longer 
+
+startup time for a given Re[ZXY].   For Lm = 147 nH, Rm = 0.9Ω and if Re[ZXY] is 
+
+chosen to be -3* Rm, τexp = 82 ns. With an initial voltage of ~1µV, it takes 12.6τexp ≈ 
+
+ 
+
+47
+
+1.03 µs to reach 300 mV of voltage swing.  Faster startup time can be achieved by 
+
+increasing Re[ZXY] at the expense of a higher start-up current consumption.    
+
+ 
+
+3.  Saturation.  When the output voltage is sufficiently large, it pushes the transistors 
+
+into the triode region, reducing the loop gain.  When the large signal Re[ZXY] = -Rm, 
+
+the oscillator reaches steady state.  The time from the onset of gain compression to 
+
+steady state is very difficult to determine analytically since it is a highly nonlinear.  
+
+Based on simulation, this period is ~ 100 ns to 200 ns.   
+
+Thus, the startup time of the FBAR oscillator is ~1.25µs.  If the startup time constitutes 
+
+10% of the bit period, the oscillator is able to support data rates up to 80 kbps with on-off 
+
+keying modulation.  To achieve a higher data rate, the startup current can be increased to 
+
+achieve a faster τexp.  
+
+  
+
+3.2.3  Implementation  
+
+The  FBAR  oscillator  is  implemented  in  a  standard  0.13µm  CMOS  process  from  ST 
+
+Microelectronics  [Chee05a].  The  FBAR  resonator  and  the  CMOS  die  are  packaged 
+
+together onto a test board using chip-on-board assembly as shown in Fig. 3.7.  Two short 
+
+bond wires are used to connect the FBAR to the CMOS die to minimize parasitic and 
+
+avoid any spurious oscillations.  Each bond wire is estimated to be ~ 250pH and is taken 
+
+into account in the design. Due to the number of test and biasing pads needed, the entire 
+
+CMOS oscillator occupies about 0.8 x 0.8 mm2.  When integrated as part of a transceiver, 
+
+only the oscillator core is needed and it occupies 40 x 40 µm2.   
+
+ 
+
+48
+
+FBAR 
+
+CMOS Die 
+
+Sense electrode 
+
+Force electrode  
+
+Bond wires  
+
+ 
+ 
+
+ 
+
+ 
+
+800µm
+
+Fig. 3.7: Die photo of the FBAR oscillator 
+
+3.2.4  Measured Results 
+
+ 
+The oscillator is self-biased with a 430mV supply and dissipates 89µW for sustained 
+
+oscillation at 1.882 GHz.  The measured zero to peak output voltage swing is 142mV.  
+
+The  output  spectrum  of  the  oscillator  is  shown  in  Fig.  3.8.    A  clean  output  signal  is 
+
+obtained and no close-in spurs are observed. Second, third, fourth and fifth harmonics are 
+
+measured to be -43.8 dBc, -45.5 dBc, -68.8 dBc and -69.7 dBc respectively. 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+Fig. 3.8: Output frequency spectrum of FBAR oscillator. 
+
+49
+
+The measured phase noise performance is shown in Fig. 3.9.  The oscillator achieves a 
+
+phase  noise  of  -98dBc/Hz  and  -120dBc/Hz  at  10kHz  and  100kHz  offsets  respectively.   
+
+The good phase noise performance is mainly attributed to the high Q FBAR resonator. 
+
+-90
+
+)
+z
+H
+/
+c
+B
+d
+(
+ 
+e
+s
+o
+N
+ 
+e
+s
+a
+h
+P
+
+i
+
+-100
+
+-110
+
+-120
+
+-130
+
+-140
+
+10k
+
+-98 dBc/Hz
+
+ 
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+-120 dBc/Hz 
+
+ 
+
+Instrument’s 
+noise floor 
+
+ 
+
+100k
+1M
+Frequency offset (Hz)
+
+10M
+
+Fig. 3.9: Measured phase noise performance of FBAR oscillator. 
+
+A better phase noise performance is obtained by operating the oscillator at the edge of 
+
+the  current  limited  regime  [Ham01].    Fig.  3.10  shows  the  output  voltage  swing  and 
+
+measured  phase  noise  at  various  power  consumptions.    The  optimal  measured  phase 
+
+noise is -100 dBc/Hz at 10kHz offset and -122 dBc/Hz at 100kHz offset and it occurs 
+
+when the output voltage swing is 167mV with the oscillator consuming 104µW.  Beyond 
+
+this  operating  point,  the  oscillator  transits  into  the  voltage  limited  regime  which  the 
+
+transistor’s output resistance decreases and loads the FBAR, resulting in a poorer phase 
+
+noise performance.       
+
+ 
+
+ 
+
+ 
+
+50
+
+350
+
+300
+
+250
+
+-95
+
+)
+
+V
+m
+
+-100
+
+i
+
+(
+ 
+g
+n
+w
+s
+ 
+e
+g
+a
+
+10 kHz offset
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Fig. 3.10:  Measured  output  voltage  swing  and  phase  noise  performance 
+
+Power Consumption (µW)
+
+100 kHz offset
+
+ 
+
+P
+h
+a
+s
+e
+N
+o
+s
+e
+ 
+(
+d
+B
+c
+/
+H
+z
+)
+
+t
+l
+
+o
+v
+ 
+k
+a
+e
+p
+o
+
+ 
+
+t
+ 
+
+o
+r
+e
+Z
+
+-105
+
+i
+
+-110
+
+-125
+
+300
+
+100
+
+50
+
+-115
+
+-120
+
+100
+
+150
+
+200
+
+250
+
+200
+
+150
+
+of FBAR oscillator for various power consumptions. 
+
+ 
+To  benchmark  the  performance  of  this  oscillator  with  the  existing  state-of-the-art,  a 
+
+dimensionless power-frequency-normalized figure of merit (FOM) is used [Ham01].  The 
+
+FOM is defined as: 
+
+ 
+
+FOM = 
+
+10
+
+log
+
+
+
+
+
+
+kT
+P
+DC
+
+
+
+
+
+f
+
+f
+
+OSC
+
+OFFSET
+
+2
+
+
+
+
+
+
+
+
+
+
+{
+fL
+
+−
+
+OFFSET
+
+}
+
+  
+
+(3.2)  
+
+where PDC is the oscillator power consumption, L{fOFFSET} is the oscillator phase noise at 
+
+an  offset  frequency  fOFFSET  from  its  oscillation  frequency  fOSC,  k  is  the  Boltzmann 
+
+constant and T is the temperature in Kelvin.  Table 3.1 shows that this FBAR oscillator 
+
+has the best FOM compared to other state-of-the-art GHz-range oscillators.  Its FOM is 
+
+~470 times better (~27dB) than the on-chip LC oscillator.  The excellent FOM is due to 
+
+the high Q FBAR and low power circuit techniques.  
+
+ 
+
+ 
+
+51
+
+Table 3.1: Comparison of FBAR oscillator with state of the art. 
+
+Ref. 
+
+fOSC 
+(GHz) 
+
+PDC 
+(mW) 
+
+Phase Noise 
+
+Process 
+
+[Chee05a] 
+
+1.9 
+
+0.104 
+
+-122 dBc/Hz @ 
+
+100 kHz offset 
+
+[Otis01] 
+
+1.9 
+
+0.3 
+
+-120 dBc/Hz @ 
+
+100 kHz offset 
+
+[Steinkamp03]  5.8 
+
+40 
+
+-106 dBc/Hz @ 
+
+10 kHz offset 
+
+Resonator / 
+Inductor 
+
+FOM
+
+(dB) 
+
+FBAR 
+
+43.64
+
+FBAR 
+
+37.05
+
+SAW resonator 31.11
+
+(µm) 
+
+0.13 
+CMOS  
+
+0.18 
+CMOS  
+
+0.8 SiGe 
+BiCMOS
+
+[Linten04] 
+
+5.8 
+
+0.328 
+
+-115 dBc/Hz @  
+
+1 MHz offset 
+
+0.09 
+CMOS  
+
+Thin film 
+inductor 
+
+21.28
+
+[Cheng03] 
+
+2.4 
+
+39 
+
+-121 dBc/Hz @ 
+
+Si Bipolar LTCC ceramic 
+
+18.75
+
+100 kHz offset 
+
+resonator 
+
+[Song04] 
+
+5.9 
+
+7.65 
+
+-124 dBc/Hz @  
+
+1 MHz offset 
+
+On-chip LC 
+
+16.89
+
+0.18 
+CMOS  
+
+ 
+
+3.3  Low Power Amplifier 
+
+3.3.1  Principles of Efficient Power Amplification   
+
+Besides  reducing  the  pre-PA  power,  it  is  also  crucial  to  provide  efficient  power 
+
+amplification to minimize the PA power consumption. The schematic of a typical PA is 
+
+shown Fig 3.11. 
+
+ 
+
+ 
+
+52
+
+ 
+
+Power 
+
+ 
+Amplification 
+ 
+
+MOSFET 
+
+Vin 
+
+Driver 
+
+ 
+
+ 
+
+Matching 
+Network 
+
+Antenna 
+
+Fig 3.11: Schematic of a low power amplifier 
+
+Efficient power amplification is achieved by: 
+
+1.  Maximizing  PA  transistor  efficiency.    The  PA  transistor  typically  consumes  the 
+
+most power and hence, it is crucial to maximize its efficiency.  This is achieved by 
+
+using  a  matching  network  to  minimize  the  product  of  the  current  through  the 
+
+device and voltage across the device (i.e. Ids*Vds) and their overlap time.   
+
+2.  Minimizing matching network loss. The matching network, consisting of inductors 
+
+and  capacitors,  is  used  to  transform  the  antenna  impedance  (e.g.  50Ω)  to  the 
+
+optimal impedance needed to maximize the device efficiency.  Due to low Q on-
+
+chip  inductors,  significant  matching  network  loss  can  occur  in  a  fully  integrated 
+
+solution.  This loss can be reduced by employing higher Q off-chip or bond wire 
+
+inductors, or an active antenna. 
+
+3.  Minimizing driver power.  At a low radiated power, the power consumption of the 
+
+driver  stage  contributes  to  a  significant  overhead.    This  can  be  eliminated  by 
+
+driving the PA transistor directly with the FBAR oscillator. Though this increases 
+
+the oscillator power consumption, eliminating the driver stage and co-designing the 
+
+oscillator with the power amplification MOSFET leads to a more optimal solution.  
+
+ 
+
+53
+
+3.3.2  Switching and Non-Switching Power Amplifiers 
+ 
+
+Power  amplifiers  can  be  classified  as  switching  and  non-switching  power  amplifiers.  
+
+Switching PA operates the transistor as a switch.  Since an ideal switch has either zero 
+
+voltage across it or zero current through it at all times, it dissipates no power.  Hence 
+
+switching  power  amplifiers  can  theoretically  achieve  100%  efficiency  [Krauss80].    In 
+
+reality, component non-idealities result in losses and degrade the efficiency.  Power loss 
+
+occurs due to finite on-resistance of the switch, finite Q of inductors and capacitors in the 
+
+matching network and sub-optimal operating conditions.   
+
+For  high  efficiency  operation,  switching  power  amplifiers  typically  require  a  larger 
+
+device or a higher drive voltage to achieve smaller on-resistance.  However, this higher 
+
+drive  requirement  increases  the  pre-PA  power  substantially  and  degrades  the  overall 
+
+transmitter efficiency significantly.  Hence, switching power amplifiers are not suitable at 
+
+low radiated power due to its large pre-PA power.  In addition, their matching networks 
+
+are more complex and require more inductors, resulting in larger silicon area.  
+
+Non-switching power amplifiers employ the transistor as a transconductor, instead of a 
+
+switch.  As such, it suffers from device loss as its Ids*Vds product is non-zero and hence 
+
+its theoretical efficiency is lower than that of switching power amplifiers.  However, it 
+
+requires less drive requirement, resulting in a lower pre-PA power and higher transmitter 
+
+efficiency at low radiated power.  
+
+The  schematic  of  a  non-switching  power  amplifier  is  shown  in  Fig  3.12  [Chee04].  
+
+Transistor M1 operates as a transconductor and converts its input voltage signal Vin into 
+
+its output drain current Ids.  The RF tank, formed by inductor L1 and all the capacitances 
+
+ 
+
+54
+
+at node X, filters out the harmonics in the drain current and only allows the fundamental 
+
+drain current to flow to the load, thus resulting in a sinusoidal drain voltage Vds. 
+
+ 
+ 
+
+Vdd 
+
+Rind 
+
+L1 
+
+X 
+
+Vds 
+
+Rout 
+
+Req 
+Ceq 
+
+Ids 
+
+CT 
+
+Vin 
+
+M2 
+
+M1 
+
+Vds
+
+ 
+
+Ids Idd 
+
+C1 
+
+Vo 
+
+C2 
+
+RL 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Fig 3.12: Schematic of a non-switching power amplifier. 
+
+The fundamental component of the drain current I1, DC current Idc and output power 
+
+Pout are given as :  
+
+ 
+
+ 
+
+ 
+
+I
+
+dc
+
+=
+
+I
+dd
+π
+
+(sin
+
+y
+
+−
+
+y
+
+cos
+
+y
+
+)
+
+, 
+
+I
+
+1
+
+=
+
+I
+dd
+2
+π
+
+2(
+
+y
+
+−
+
+y
+)2sin
+
+,  
+
+P
+out
+
+=
+
+1
+2
+
+2
+I
+1
+
+
+
+
+
+
+R
+R
+//
+out
+ind
+R
+R
+R
+//
++
+out
+ind
+eq
+
+2
+
+
+
+
+
+
+R
+eq
+
+ 
+
+(3.3) 
+
+(3.4) 
+
+(3.5) 
+
+where 2y is the conduction angle, Rout is the output resistance of the cascoded transistors, 
+
+Rind is the loss in inductor L1, Req is the transformed load resistance, Vds is the sinusoidal 
+
+ 
+
+55
+
+drain voltage at node X and Idd is the amplitude of the drain current when the conduction 
+
+angle is π.   The drain efficiency ηd of the amplifier is given as: 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+dη  
+
+=
+
+P
+out
+P
+dc
+
+ 
+
+=
+
+1
+2
+
+
+
+
+
+I
+1
+I
+dc
+
+
+
+
+
+
+
+
+
+V
+ds
+V
+dd
+
+=
+
+1
+2
+
+
+
+
+
+I
+1
+I
+dc
+
+
+
+
+
+
+
+
+
+V
+ds
+V
+dd
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+R
+R
+//
+ind
+out
+R
+R
+R
+//
++
+ind
+out
+eq
+
+R
+R
+//
+ind
+out
+R
+R
+R
+//
++
+out
+ind
+eq
+
+
+
+
+
+
+
+
+
+
+
+2
+
+•
+
+
+
+
+
+
+R
+eq
+R
+out
+
+//
+
+R
+eq
+
+  
+
+
+
+
+
+
+R
+ind
+
+//
+
+ 
+.
+
+(3.6) 
+
+(3.7) 
+
+(3.8) 
+
+Maximizing  the  drain  efficiency  at  a  given  output  power  requires  the  output  voltage 
+
+swing Vds and Rind//Rout to be maximized.  For a 1V supply with a saturation voltage of 
+
+~100mV,  the  maximum  achievable  swing  is  0.9V.    This  translates  to  a  transformed 
+
+resistance of ~810 Ω to deliver 0.5mW if the loading due to Rout and Rind are negligible.  
+
+The required impedance matching is achieved by the capacitive transformer C1 and C2.  
+
+Capacitive  transformers  are  preferred  over  LC  matching  networks  or  inductive 
+
+transformers  because  on-chip  capacitors  have  much  higher  Q-factor  (Q  >  30)  than  on-
+
+chip inductors (Q ~ 5 to 8), resulting in much lower loss.  The impedance looking into the 
+
+transformer Zeq is given as: 
+
+ 
+
+Z
+
+eq
+
+=
+
+1
+Cj
+ω
+1
+
++
+
+
+
+
+
+R
+
+L
+
+//
+
+1
+Cj
+ω
+
+2
+
+
+
+
+
+. 
+
+(3.9) 
+
+Capacitors C1 and C2 are chosen to provide the required impedance.   The equivalent 
+
+capacitance Ceq and the parasitic capacitance at node X resonate with inductor L1 to form 
+
+a RF tank.  By making C1 and C2 tunable to provide different transformed resistances but 
+
+ 
+
+56
+
+approximately the same equivalent capacitance, certain discrete levels of power control 
+
+are possible. 
+
+In this design, the total capacitance at node X is ~ 2.5pF and it comprises of Ceq, bond 
+
+pad capacitance, tuning capacitance CT, interconnect capacitance and drain capacitance of 
+
+transistor M2.  The inductance L1 needed to resonate with this capacitance at 1.9GHz is ~ 
+
+2.8nH.   If L1 is implemented using on-chip inductor with Q of ~ 5, Rind is about 170Ω.  
+
+The low Rind diverts the signal current away from the load, and consequently degrades the 
+
+efficiency by 83%.  To overcome this problem, inductor L1 is implemented using a bond 
+
+wire  inductor,  which  has  much  higher  Q  (~  25).    To  compensate  for  variations  in  the 
+
+bond  wire  inductance,  a  5-bit  switched  capacitor  array  is  used  to  provide  for  ~  24% 
+
+tuning range.  Alternatively, an external inductor can be used [Otis04].   
+
+The peak voltage at node X is ~ 2*Vdd.  This exceeds the maximum voltage rating in a 
+
+0.13µm CMOS process (~1.3V).  To alleviate this problem, a cascode transistor M2 is 
+
+added and biased such that its gate-drain voltage does not exceed the maximum voltage 
+
+rating.  Cascoding also increases the input-output isolation and improves the efficiency 
+
+by boosting Rout. 
+
+Since the drain voltage at node X is always sinusoidal, improving the device efficiency 
+
+requires  decreasing  the  conduction  angle  to  reduce  its  Ids*Vds  product.    However, 
+
+decreasing the conduction angle also reduces the fundamental current and output power.  
+
+Thus,  a  larger  transistor  or  higher  drive  voltage  is  needed  to  deliver  the  same  output 
+
+power and this result in an increased drive requirements and pre-PA power.  Fig. 3.13 
+
+shows the size of transistor M1 (normalized to its size when the conduction angle equals 
+
+ 
+
+57
+
+360°) and its maximum device efficiency as a function of the conduction angle for the 
+
+same output power and input drive voltage.  Reducing the conduction angle beyond 180° 
+
+improves  the  device  efficiency  at  a  diminishing  rate  but  the  transistor  size  increases 
+
+drastically.  For example, when the conduction angle is reduced from 360° to 180°, the 
+
+device  efficiency  improves  by  28.5%  (from  50%  to  78.5%)  and  requires  doubling  the 
+
+input device size to deliver the same output power. However, doubling the device size 
+
+further  reduces  the  conduction  angle  to  ~130°  and  improves  the  efficiency  by  only 
+
+another 10%.  
+
+104
+
+e
+z
+s
+ 
+
+i
+
+103
+
+i
+
+e
+c
+v
+e
+d
+
+ 
+
+d
+e
+z
+
+i
+l
+
+a
+m
+r
+o
+N
+
+102
+
+101
+
+100
+
+0
+
+60
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+120
+
+Conduction angle (Degrees)
+
+ 
+180
+
+240
+
+100
+
+80
+
+60
+
+40
+
+20
+
+300
+
+0
+360
+
+i
+
+M
+a
+x
+m
+u
+m
+d
+e
+v
+c
+e
+
+ 
+
+i
+
+ 
+
+e
+
+i
+
+f
+f
+i
+c
+e
+n
+c
+y
+ 
+(
+
+%
+
+)
+
+Fig 3.13: Normalized device size and maximum efficiency versus conduction angle.  
+
+ 
+
+3.4  Transmitter Prototype 
+ 
+3.4.1  Implementation 
+ 
+
+The schematic of the direct modulation transmitter is shown in Fig. 3.14.  It consists of 
+
+a FBAR oscillator co-designed with a non-switching low power amplifier.  The FBAR 
+
+ 
+
+58
+
+oscillator is similar to that discussed in section 3.2 except for a slightly larger loading and 
+
+foot switch to turn it on and off.  The FBAR oscillator provides a stable RF carrier and 
+
+the  low  power  amplifier  provides  efficient  power  amplification  and  antenna  matching.  
+
+Baseband data is modulated onto the carrier using on-off keying by power cycling the 
+
+oscillator and the power amplifier via its foot switch and bias circuit respectively.   
+
+ 
+
+Oscillator 
+
+Low Power Amplifier 
+
+FBAR 
+
+Bias 
+
+Baseband digital bits 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+5 bits
+
+50Ω 
+
+Antenna 
+
+Fig 3.14: Schematic of the direct modulation transmitter. 
+
+The transmitter is implemented as part of a super regenerative transceiver [Otis05b] in a 
+
+standard 0.13µm CMOS process from ST Microelectronics.  The die is mounted on a test 
+
+board using chip on board assembly as shown in Fig. 3.15.  The FBAR is wire bonded to 
+
+the oscillator circuit using two short bond wires to minimize parasitic and any unwanted 
+
+spurs.  The transmitter die area occupies 0.8 x 1 mm2.  A ~ 2.5 mm long bond wire is 
+
+used as the bond wire inductor for the matching network.   
+
+ 
+
+ 
+
+ 
+
+59
+
+FBAR 
+
+CMOS 
+
+Die 
+
+Bond wire inductor 
+
+Decoupling capacitors 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+Fig 3.15: Die photo of the direct modulation transmitter. 
+
+3.4.2  Measured Results 
+
+ 
+The transmitter’s power consumption and efficiency at various output power are shown 
+
+in  Fig.  3.16.    It  achieves  a  peak  efficiency  of  23%  while  delivering  0.5mW.  The 
+
+transmitter  consumes  ~  2.15mW  when  turned  on  and  dissipated  zero  power  when 
+
+switched  off.    Hence,  it  consumes  ~  1.1mW  for  OOK  modulation  assuming  equal 
+
+probability of transmitting a ‘0’ and ‘1’.  The transmitter efficiency varies by only 3% as 
+
+the output power changes from 0.3mW to 0.6mW, allowing for efficient power control.   
+
+ 
+
+ 
+
+ 
+
+)
+
+W
+m
+
+(
+ 
+n
+o
+
+i
+t
+
+p
+m
+u
+s
+n
+o
+C
+
+ 
+r
+e
+w
+o
+P
+X
+T
+
+ 
+
+3.0
+
+2.5
+
+2.0
+
+1.5
+
+1.0
+
+0.5
+
+0.0
+
+0
+
+100
+
+30
+
+25
+
+20
+
+15
+
+10
+
+5
+
+ TX Power
+ TX Efficiency
+ PA Efficiency
+
+500
+
+0
+600
+
+E
+
+i
+
+f
+f
+i
+c
+e
+n
+c
+y
+ 
+(
+
+%
+
+)
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+200
+
+ 
+300
+
+Output Power (µW)
+
+400
+
+Fig. 3.16: Power consumption and efficiency of the direct modulation transmitter. 
+
+60
+
+For  OOK  modulation,  the  data  rate  is  limited  by  the  startup  time  of  the  FBAR 
+
+oscillator.    Fig.  3.17  shows  the  oscillator’s  startup  time  as  a  function  of  its  power 
+
+consumption.  Generally, increasing the oscillator’s power decreases the startup time, but 
+
+increases  the  power  beyond  ~  300µW  yields  diminishing  returns  in  reduction  of  the 
+
+startup time. At nominal operating conditions, the oscillator consumes ~ 350µW and has 
+
+a startup time of ~ 1.2  µs.  If the startup time accounts  for 10% of the bit period, the 
+
+oscillator  is  capable  of  supporting  data  rate  up  till  ~  83kbps.    The  oscillator’s  startup 
+
+waveform at different power consumption is shown in Fig. 3.18.  
+
+ 
+
+ 
+
+ 
+
+ 
+
+)
+s
+µ
+(
+ 
+e
+m
+T
+p
+u
+t
+r
+a
+S
+
+t
+
+i
+
+ 
+
+18
+
+16
+
+14
+
+12
+
+10
+
+8
+
+6
+
+4
+
+2
+
+0
+100
+
+200
+
+400
+
+500
+
+600
+
+Fig. 3.17: Oscillator startup time as a function of power consumption. 
+
+ 
+
+61
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+300
+
+Oscillator Power (µW)
+
+500ns/div 
+
+290µW 
+
+356µW 
+
+444µW 
+
+ 
+
+ 
+
+Fig. 3.18: Oscillator’s startup waveforms at various power consumptions. 
+
+ 
+The  transmitter  output  spectrum  is  shown  in  Fig.  3.19.    A  clean  output  signal  is 
+
+obtained at 1.865 GHz and no close-in spurs are observed. The output waveform when 
+
+the transmitter is modulated using on-off keying is shown in Fig 3.20.  
+
+Marker 1
+
+1.865290064 GHz 
+
+1
+1
+
+B 
+B 
+
+5 MHz/Div
+
+Span 50 MHz 
+
+ 
+
+Fig 3.19: Output spectrum of the direct modulation transmitter. 
+
+ 
+
+ 
+
+62
+
+5us/div 
+
+100 kbps OOK 
+
+ 
+
+Fig 3.20: Modulated on-off keying transient waveforms.  
+
+The pitch of the landing pads on the PCB for the bond wire inductor is designed to be 
+
+0.2 mm for different bond wire length implementations.  Fig 3.21 shows the output power 
+
+as a function of the capacitor array bit code.  The 5-bits capacitor array is able to resonate 
+
+with  any  bond  wire  inductor  having  length  ranging  from  ~  2.4  to  3.6  mm.    This  is 
+
+sufficient to mitigate the variability in bond wire length due to manufacturing variations. 
+
+500
+
+450
+
+400
+
+350
+
+300
+
+250
+
+200
+
+150
+
+100
+
+50
+
+)
+
+W
+µ
+(
+ 
+r
+e
+w
+o
+P
+
+ 
+t
+u
+p
+t
+u
+O
+
+ 
+ 
+
+Bond Wire Length
+
+ 2.0 mm
+ 3.2 mm
+ 3.6 mm
+
+0
+
+5
+
+10
+
+15
+Bit Code
+
+20
+
+25
+
+30
+
+Fig 3.21:  Output tank tuning using capacitor array with various bond wire length. 
+
+63
+
+       
+
+ 
+
+ 
+
+ 
+
+  
+
+ 
+
+ 
+
+The effect of supply pushing on the oscillator frequency is shown in Fig. 3.22.  With a 
+
+nominal  supply  voltage  of  0.5V,  a  ±10%  change  in  the  supply  changes  the  RF  carrier 
+
+frequency by ±120 kHz.  This is well within the 500 kHz receiver bandwidth [Otis05b].     
+
+Center Frequency
+1.86528365 GHz
+
+460
+
+480
+
+500
+
+120
+
+80
+
+40
+
+0
+
+-40
+
+-80
+
+)
+z
+H
+k
+(
+ 
+y
+c
+n
+e
+u
+q
+e
+r
+F
+
+ 
+t
+
+e
+s
+f
+f
+
+O
+
+-120
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+520
+
+540
+
+560
+Oscillator VDD (mV)
+
+Fig 3.22:  Oscillator supply pushing. 
+
+The  breakdown  of  the  transmitter’s  power  budget  compared  to  the  direct  conversion 
+
+transmitter [Choi03] is shown in Fig 3.27.   
+
+Direct Modulation Transmitter 
+
+Direct Conversion Transmitter 
+
+ 
+
+Active Power: 1.1mW  
+Radiated Power:  0.5mW 
+
+Data Rate: 83kbps 
+
+PA power  
+ (60.4%) 
+
+ 
+
+Active Power: 30mW  
+Radiated Power:  1mW 
+
+Data Rate 250kbps 
+
+Modulator + DAC 
+
+(2%) 
+
+Freq. Syn. 
+
+(40%) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Osc. power 
+(16.3%) 
+
+Radiated power 
+
+ (23.3%) 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+PA power 
+
+(45%) 
+
+Radiated power 
+
+ (3%) 
+
+Mixer 
+ (10%) 
+
+Fig. 3.23: Power budget of (left) direct modulation TX, (right) direct conversion TX. 
+
+64
+
+The  efficiency  of  the  direct  modulation  transmitter  is  much  higher  than  that  of  the 
+
+direct  conversion  transmitter.    This  is  achieved  by  (1)  reducing  the  pre-PA  power  by 
+
+using a less complex transmitter architecture (i.e. less active circuits), (2) replacing the 
+
+power  hungry  frequency  synthesizer  with  a  low  power  FBAR  oscillator,  and  (3) 
+
+optimizing the entire transmit chain by co-designing the PA and the oscillator.   
+
+Fig. 3.23 shows that the efficiency of the direct modulation transmitter is still limited 
+
+by  the  power  loss  in  the  PA.    PA  power  loss  is  mainly  due  to  loss  in  its  matching 
+
+network, which can be eliminated if an active antenna is used instead of the standard 50Ω 
+
+antenna.  An active antenna provides the optimal impedance needed to maximize the PA 
+
+efficiency.    Another  limitation  of  the  transmitter  efficiency  is  the  pre-PA  power 
+
+(oscillator  power).    The  pre-PA  power  can  be  reduced  by  replacing  the  low  power 
+
+amplifier  with  a  power  oscillator  and  employing  injection  locking  to  obtain  a  stable 
+
+carrier.    A  power  oscillator  is  self-driven  and  does  not  load  the  FBAR  oscillator 
+
+significantly, hence resulting in lower pre-PA power. 
+
+Besides improving the efficiency, the data rate should also be increased to reduce the 
+
+active  time.    It  can  be  improved  by  decreasing  the  oscillator’s  startup  time  using  two 
+
+amplifiers during startup or reducing the oscillator’s power consumption by minimizing 
+
+its loading using injection locking so that it can be kept active at all times during data 
+
+transmission.   
+
+These efficiency and data rate enhancement techniques are presented in the injection 
+
+locked transmitter and the active antenna transmitter in the next two chapters.    
+
+ 
+
+65
+
+ 
+ 
+ 
+Chapter 4 
+ 
+Injection Locked Transmitter 
+
+ 
+ 
+ 
+ 
+
+Obtaining  high  PA  efficiency  and  low  pre-PA  power  concurrently  at  low  radiated 
+
+power levels is particularly challenging since an efficient PA often requires a higher drive 
+
+voltage or loads its driving stage considerably.  The higher drive requirement increases 
+
+the pre-PA power and degrades the overall transmitter efficiency.  This inherent tradeoff 
+
+between the pre-PA power and PA efficiency limits the overall transmitter efficiency in 
+
+the  direct  modulation  transmitter.    To  obtain  a  better  compromise  between  the  pre-PA 
+
+power and PA efficiency at low radiated power, a power oscillator can be used instead of 
+
+a  power  amplifier.  A  power  oscillator  is  self-driven  and  requires  only  minimal  drive 
+
+requirements [Tsai99].  However, due to the antenna loading, its oscillation frequency is 
+
+not  precise  and  it  has  to  be  locked  to  a  reference  oscillator  to  obtain  an  accurate  RF 
+
+carrier.  This results in the injection locked transmitter. 
+
+ 
+
+4.1 Architecture 
+
+The  block  diagram  of  a  direct  modulation  transmitter  and  the  injection  locked 
+
+transmitter [Chee05b, Chee06a] are compared in Fig. 4.1.   
+
+ 
+
+66
+
+ 
+ 
+
+   
+
+ 
+
+ 
+
+Ref Osc 
+
+PA 
+
+Ref Osc 
+
+Power Osc 
+
+Data / Power Control 
+
+ 
+
+Data / Power Control 
+
+ 
+
+ 
+
+(a) Direct modulation transmitter 
+   
+
+(b) Injection locked transmitter 
+
+Fig. 4.1: Block diagram of (a) direct modulation TX and (b) injection locked TX 
+
+In  the  injection  locked  transmitter,  the  power  amplifier  is  replaced  by  an  efficient 
+
+power  oscillator.    A  power  oscillator  is  necessary  since  the  FBAR  oscillator  cannot 
+
+deliver  1mW  to  the  antenna  without  degrading  its  Q-factor  substantially.    The  power 
+
+oscillator is driven into the voltage-limited regime to allow the output voltage to swing 
+
+closer to the supply.  This reduces the device loss (Ids*Vds) and improves its efficiency.  
+
+The  power  oscillator  is  self-driven  and  hence  does  not  load  the  reference  oscillator 
+
+significantly.    Thus  the  pre-PA  power,  consisting  of  the  reference  oscillator  power,  is 
+
+minimized.          
+
+The  50Ω  antenna  loads  the  power  oscillator’s  output  tank  and  degrades  its  Q-factor.  
+
+Thus the power oscillator suffers from a poor phase noise performance and an imprecise 
+
+oscillation frequency.  To obtain a stable RF carrier, the power oscillator is locked to an 
+
+ultra-low power reference oscillator, whose oscillation frequency is stabilized by a high 
+
+Q FBAR resonator.     
+
+Baseband data can be modulated onto the carrier using on-off keying by power cycling 
+
+the entire transmitter.  In this case, the data rate is determined by both the startup time of 
+
+ 
+
+67
+
+the FBAR oscillator and the lock-in time of the power oscillator.  Alternatively, the ultra 
+
+low FBAR oscillator can remain active throughout data transmission and only the power 
+
+oscillator is power cycled to achieve OOK modulation.  This allows for higher data rates 
+
+as  it  is  determined  only  by  the  lock-in  time  of  the  power  oscillator.    Frequency  shift 
+
+keying can also be employed by using a tunable FBAR oscillator.  
+
+  
+
+4.2 Injection Locking 
+
+Injection locking is a non-linear phenomenon whereby a free running oscillator, when 
+
+perturbed by an external signal, changes its frequency to that of the perturbation signal 
+
+when their frequencies are close.  This phenomenon was discovered as early as the 17th 
+
+century when the Dutch scientist Christian Huygens noticed that the pendulums of two 
+
+clocks on the wall moved in unison if the clocks are hung close to each other.  However, 
+
+this  process  was  not  well  understood  until  Adler  derived  analytical  expressions 
+
+describing the behavior of injection locking of LC oscillators under small perturbations 
+
+[Adler73]. 
+
+Figure 4.2 shows the schematic of a LC oscillator under a small perturbation signal Iinj. 
+
+ 
+
+ 
+
+   
+
+IOSC 
+
+IR 
+
+IINJ(ω1) 
+
+-R 
+
+R 
+
+L 
+
+C 
+
+Fig. 4.2: Diagram of LC oscillator with a small perturbation signal 
+
+ 
+
+In  the  absence  of  an  injected  signal  IINJ,  the  oscillator  oscillates  at  its  free  running 
+
+ 
+
+68
+
+frequency ω0=
+
+1
+LC
+
+ and IOSC is equal to IR in both magnitude and phase.  When a small 
+
+signal whose frequency ω1 is in the vicinity of ω0 is injected, it introduces a phase shift 
+
+between IOSC and IINJ.  This causes the LC tank to provide the necessary phase shift φ0 
+
+and the oscillator oscillates at ω1 to maintain the phasor relationship 
+
+  
+
+r
+I
+R
+
+=
+
+r
+I
+INJ
+
++
+
+r
+I
+OSC
+
+. 
+
+(4.1) 
+
+The  frequency  response  of  the  tank  with  a  small  injected  signal  and  the  phasor 
+
+relationship between IR, IINJ, and IOSC is shown in Fig. 4.3 [Razavi04]. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ω0 
+
+ω1 
+
+          
+
+ 
+
+ 
+
+φ0 
+
+IOSC 
+
+IR
+
+ω 
+
+ω 
+
+φ0
+
+θ0 
+
+IINJ 
+
+Fig 4.3: (left) Frequency response of tank under injection and (right) phasor diagram.  
+
+For small perturbation (i.e. small IINJ and IR ≈ IOSC), ω0 will be pulled towards ω1.  The 
+
+dynamics of this pull-in process is described by the Adler’s equation [Alder73] given as: 
+
+ 
+
+d
+θ
+dt
+
+=
+
+ωω
+1
+
+−
+
+0
+
+−
+
+I
+ω
+0
+IQ
+2
+
+INJ
+
+OSC
+
+sin
+
+θ
+, 
+
+where IOSC is the current through the negative resistance, Q is the quality factor, 
+
+ 
+
+69
+
+(4.2)      
+
+dθ is 
+dt
+
+the  instantaneous  beat  frequency  and θ  is  the  phase  difference  between  IINJ  and  IOSC. 
+
+When the oscillator achieves lock, 
+
+dθ = 0 and the single sided lock-in range ωL is: 
+dt
+
+  
+
+ 
+
+L
+
+ωωω
+1
+
+−
+
+=
+
+0
+
+=
+
+I
+ω
+0
+IQ
+2
+
+INJ
+
+OSC
+
+. 
+
+(4.3) 
+
+At the edge of the lock-in range (i.e. ω=ω0±ωL), θ=90° and IOSC is in quadrature with IINJ. 
+
+Equation  (4.3)  shows  that  the  lock-in  range  is  proportional  to  IINJ  and  inversely 
+
+proportional to Q.  A higher injected signal IINJ requires a larger phase shift φ0 to satisfy 
+d  at ω0.  In both cases, they allow for a 
+φ
+d
+ω
+
+equation (4.1) and a lower Q has a smaller 
+
+larger frequency deviation, leading to a higher lock-in range.   
+
+The pull-in process is obtained by solving the differential equation (4.2), which gives: 
+
+ 
+
+θ
+
+t
+)(
+
+=
+
+tan2
+
+1
+−
+
+
+
+
+
+1
+sin
+θ
+0
+
+−
+
+cot
+
+θ
+0
+
+tanh
+
+L θω
+0
+
+cos
+2
+
+
+
+
+
+(
+t
+
+−
+
+t
+
+0
+
+
+
+) 
+
+
+
+
+, 
+
+(4.4) 
+
+where θ0 = sin-1[(ω0-ω1)/ωL)] is the steady state phase shift between IINJ and IOSC, and t0 is 
+
+the integration constant that depends on the initial phase difference θi between IINJ and 
+
+IOSC  at  t  =  0.    When  ω  approaches  ω1,  θ(t)  approaches  θ0.    The  process  becomes 
+
+exponential with time constant 1/ωL when θ(t) is close to θ0, The lock-in time is obtained 
+
+by solving equation (4.5) with θ(t) = θL ≈ θ0 and is given as: 
+
+2
+cos
+
+θω
+0
+
+L
+
+t
+
+L
+
+=
+
+ 
+
+ 
+
+tanh
+
+1
+−
+
+θ
+L
+2
+
+
+
+
+
+
+
+
+
+−
+
+sin
+
+θ
+0
+
+tan
+
+cos
+
+θ
+0
+
+
+1
+
+
+
+
+
+
+
+
+
+
+
+
+
+70
+
++
+
+t
+
+0
+
+. 
+
+(4.5) 
+
+Equation (4.5) shows that a shorter lock-in time requires a larger lock-in range ωL and a 
+
+smaller frequency deviation (ω0-ω1).    
+
+ 
+
+4.3 Power Oscillator  
+
+The injection locked transmitter consists of an ultra low power FBAR oscillator and a 
+
+LC power oscillator.  The design of the ultra low power FBAR oscillator was discussed 
+
+in Section 3.2 and hence only the design of the power oscillator is elaborated here.   
+
+ 
+
+4.3.1  Efficient Power Oscillator Design 
+
+The schematic of the power oscillator is shown in Fig. 4.4.   
+
+Vdd 
+
+L1 
+
++ 
+
+V0 
+
+- 
+
+L2 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Vinj+ 
+
+For this design, 
+
+n = 1 to 4 
+
+MA 
+
+M2n-1 • • • M1
+
+MC 
+
+Vctrl,inj 
+
+V1 
+
+M2 • • • M2n 
+
+MB
+
+Vinj-
+
+RL 
+
+C1 
+
+• • • 
+V
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+Fig. 4.4: Schematic of the injection locked oscillator. 
+
+ 
+
+71
+
+ 
+
+The oscillator core consists of a pair of cross-coupled transistors M1–M2 providing the 
+
+negative resistance needed to sustain oscillation and a LC resonator to set the oscillation 
+
+frequency at ~ 1.9GHz.  The LC resonator comprises of a ~ 2nH bond wire inductor, a 5-
+
+bits  switch  capacitor  array  C1,  bond  pad  and  interconnect  capacitances,  and  the 
+
+transistors’  gate  and  drain  capacitances.    High  Q  bond  wire  inductors  are  used  to 
+
+minimize loss.  The 50Ω antenna is transformed into a 200Ω differential load RL with a 
+
+1:4 balun, allowing the power oscillator to deliver 1mW from a supply of ~ 300mV.  RL 
+
+loads the oscillator’s output tank, hence degrading its Q-factor and frequency stability. 
+
+To obtain a stable carrier frequency, the power oscillator is injection locked to a FBAR 
+
+reference oscillator using transistors MA and MB.  Due to the high Q FBAR, the FBAR 
+
+oscillator  provides  a  stable  carrier  frequency  ω1  with  good  phase  noise  performance.  
+
+Injection locking synchronizes the free running frequency of the power oscillator ω0 to 
+
+the  stable  carrier  frequency  ω1.    Since  the  power  oscillator  is  self  driven,  its  drive 
+
+requirement is greatly reduced and transistors MA-MB can thus be chosen to be small in 
+
+order to minimize the loading on the FBAR oscillator and improve reverse isolation.              
+
+Three parallel cross-coupled transistor pairs with binary weighted widths (M3-M8) are 
+
+used  for  power  control  [Rofougaran94].    Parallel  devices  are  preferred  over  a 
+
+programmable  tail  current  source  because  they  eliminate  the  voltage  headroom  needed 
+
+for the tail current source.  This maximizes the available voltage swing and minimizes the 
+
+device loss (Ids*Vds) in the cross-coupled transistors M1-M8.  Further reduction in device 
+
+loss is obtained by operating the oscillator in the voltage-limited regime. 
+
+ 
+
+72
+
+A 5-bits switched capacitor array C1 is employed to mitigate the variations of the bond 
+
+wire inductance and ensure that ω0 lies in the lock-in range.  The LSB of the capacitor 
+
+array C1 is chosen such that |f0 - f1| ≤ 2 MHz to reduce the lock-in time.  The switches are 
+
+sized such that the Q of the capacitor array is > 60 to minimize losses.   
+
+The transistor pairs M1-M8 and MA-MB are each controlled by a foot switch to allow 
+
+them  to  be  independently  switched  on  and  off.    These  switches  are  controlled  by  the 
+
+digital bit stream for on-off keying modulation. 
+
+ 
+
+4.3.2  Lock-in Range and Lock-in Time 
+
+The lock-in range is inversely proportional to the tank Q and IOSC and proportional to 
+
+IINJ as given in equation (4.3).  Since the tank Q and IOSC is determined by the output 
+
+power, antenna load and tank inductance, IINJ has to increase in order to increase ωL. In 
+
+this design, f0 ≈ 1.9 GHz, Q ≈ 4 and IINJ/IOSC is chosen to be 5% to minimize the drive 
+
+requirement,  which  results  in  a  lock-in  range  of  ±12MHz.    This  is  sufficient  since  the 
+
+capacitive array C1 has a resolution of 4 MHz, ensuring |f0 - f1| ≤ 2 MHz.            
+
+The data rate depends on the lock-in time, which is given by equation (4.5).  For a 
+
+shorter lock-in time, it is desirable to have a larger lock-in range and a smaller (f0 - f1).  
+
+For |f0 - f1| ≤ 2 MHz and fL = 12 MHz, θ0 is ≤ 10° and the lock-in time is estimated to be ~ 
+
+300  ns.    A  shorter  lock-in  time  can  be  achieved  by  increasing  IINJ  or  using  a  finer 
+
+resolution capacitor array to reduce |f0 - f1|. 
+
+ 
+
+ 
+
+73
+
+4.3.3  Layout 
+
+The layout of the power oscillator is shown in Fig. 4.5.  An L-shaped output differential 
+
+trace is used to provide two orthogonal outputs to the antenna and bond wire inductor.  
+
+Orthogonal outputs minimize mutual coupling between the bond wires and allow for easy 
+
+placement  of  the  balun  and  bond  wire  inductor.    The  cross-coupled  devices  are 
+
+sandwiched between the output differential traces to minimize interconnect capacitance.  
+
+This allows for a larger inductor to improve the efficiency or a larger capacitor array to 
+
+increase the tuning range.  The capacitor array and injection locking devices are placed 
+
+next to the cross-coupled transistors to minimize their interconnect capacitances. 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Capacitor array  To output balun
+
++V
+
+−
+
+ouV
+
+Output differential 
+
+interconnect 
+Device foot 
+switches 
+
+Cross-coupled 
+device bank 
+
+Injection locking devices
+
+Capacitor array
+
+Fig. 4.5: Layout of the power oscillator. 
+
+ 
+
+74
+
+−
+
+ouV
+ouV
+
++
+
+To bondwire 
+
+inductors 
+
+4.4  Transmitter Prototype 
+
+4.4.1  Implementation 
+
+The  power  oscillator  is  implemented  in  a  standard  0.13µm  CMOS  process  from  ST 
+
+Microelectronics and packaged using chip-on-board assembly as shown in Fig. 4.6.  Due 
+
+to the large number of test pads needed, the die area occupies about 1 x 1.2 mm2.  When 
+
+integrated into a transceiver, only the power oscillator core is needed.  The oscillator core 
+
+occupies only 550 x 650µm2.  Two parallel bond wires, each approximately 2.5mm long, 
+
+are used to implement the tank inductance.  The injected signal is fed from the FBAR 
+
+oscillator  through  a  balun  and  oscillator’s  output  is  connected  to  the  50  Ω  antenna 
+
+through a 1:4 balun to provide a 200 Ω load to the power oscillator. 
+
+Output 
+balun 
+
+Bond wire 
+inductor 
+
+ 
+
+CMOS 
+
+Die 
+
+ 
+
+Input 
+balun 
+
+Fig. 4.6: (left) Die photo of power oscillator and (right) close-up of the PCB. 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+    
+
+4.4.2  Measured Results 
+
+The transmitter efficiency as a function of the radiated power at various supply voltages 
+
+when power oscillator is locked to the FBAR oscillator at f1 = 1.882 GHz is shown in Fig. 
+
+ 
+
+75
+
+4.7.  Power control of the transmitter is realized using 3 binary weighted cross-coupled 
+
+transistors (M3-M8).  For a target output power, there is an optimal supply voltage that 
+
+maximizes the voltage swing and minimizes the device loss. The dotted line shows the 
+
+maximum achievable efficiency without constraining the supply voltage.   
+
+At the nominal supply of 280 mV, the transmitter achieves an efficiency of 32% while 
+
+delivering 1 mW.  The efficiency of the power oscillator is 33% and the FBAR oscillator 
+
+degrades the efficiency by only 1%.  This clearly demonstrates the effectiveness of using 
+
+injection locking to reduce the power oscillator’s drive requirement and pre-PA power.  
+
+The power oscillator can operate with supply voltages as low as 210 mV.  At 210 mV 
+
+supply, it delivers 300 µW with 25% efficiency.                  
+
+ 
+
+ 
+
+)
+
+%
+
+(
+ 
+y
+c
+n
+e
+c
+i
+f
+f
+
+i
+
+m
+s
+n
+a
+r
+T
+
+E
+
+ 
+r
+e
+
+t
+t
+i
+
+32
+
+30
+
+28
+
+26
+
+24
+
+22
+
+20
+
+200
+
+400
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ Vdd = 280mV
+ Vdd = 260mV
+ Vdd = 230mV
+ Vdd = 210mV
+
+800
+
+1000
+
+Radiated Power (µW)
+
+ 
+600
+ 
+
+Fig. 4.7: Measured transmitter efficiency of the injection locked transmitter. 
+
+The  transmitter  phase  noise  performance  is  shown  in  Fig.  4.8.    Prior  to  locking,  the 
+
+transmitter’s phase noise is dominated by the power oscillator’s phase noise.  Due to the 
+
+ 
+
+76
+
+antenna loading, the Q factor of the power oscillator is low and it achieves a phase noise 
+
+of  -98  dBc/Hz  at  100kHz  offset  and  -113  dBc/Hz  at  1MHz  offset.    When  the  power 
+
+oscillator is locked to the FBAR oscillator, its phase noise performance follows that of 
+
+the FBAR oscillator.  Due to the high Q FBAR, the FBAR oscillator has excellent phase 
+
+noise  performance  and  it  improves  overall  transmitter’s  phase  noise  performance  by  ~ 
+
+20dB to -120 dBc/Hz at 100kHz offset and -132 dBc/Hz at 1MHz.  The phase noise is 
+
+eventually limited by the instrument noise floor. 
+
+ 
+
+        
+
+Unlocked
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Locked  
+
+Fig 4.8: Power oscillator phase noise performance. 
+
+The  improvement  in  phase  noise  before  and  after  locking  is  evident  in  the  output 
+
+spectrum of the transmitter shown in Fig. 4.9.  Due to the low output tank Q, the output 
+
+spectrum  is  broad  and  noisy  prior  to  locking.    However,  once  the  power  oscillator 
+
+acquires lock, a clean and stable carrier frequency is obtained due to the high Q FBAR.  
+
+ 
+
+ 
+
+ 
+
+77
+
+ 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+Fig. 4.9: Output spectrum when power oscillator is (left) free running (right) locked. 
+
+Fig. 4.10 shows the single sided lock-in range fL as a function of the bias current of the 
+
+injection locking transistor MA.  A higher bias current increases the transconductance of 
+
+transistor MA and MB, which increases the injected signal and lock-in range.  However, 
+
+this also increases the power consumption of transistor MA and MB which degrades the 
+
+overall  efficiency.    To  minimize  efficiency  degradation,  the  lock-in  range  fL  can  be 
+
+chosen to be ~7 MHz and the peak efficiency is reduced by only by ~1%. 
+
+L
+
+)
+z
+H
+M
+
+(
+ 
+
+f
+ 
+
+ 
+
+e
+g
+n
+a
+R
+n
+i
+-
+k
+c
+o
+L
+d
+e
+d
+S
+e
+g
+n
+S
+
+ 
+
+ 
+
+l
+
+i
+
+i
+
+45
+
+40
+
+35
+
+30
+
+25
+
+20
+
+15
+
+10
+
+5
+
+0
+
+34
+
+32
+
+30
+
+28
+
+26
+
+24
+
+22
+
+20
+
+18
+
+T
+r
+a
+n
+s
+m
+
+i
+t
+t
+
+e
+r
+ 
+
+E
+
+i
+
+f
+f
+i
+c
+e
+n
+c
+y
+ 
+(
+
+%
+
+)
+
+0.0
+
+0.5
+
+ 
+Fig. 4.10: Measured lock-in range of the injection locked transmitter. 
+
+Bias current of injection locked transistor MA (mA)
+
+1.0
+
+1.5
+
+2.0
+
+2.5
+
+ 
+
+78
+
+Fig 4.11 shows the measured lock-in time for f0 - f1 ≈ 2 MHz as a function of the bias 
+
+current of the injection locking transistor MA.  A higher bias current increases the injected 
+
+signal and reduces the lock-in time.  For fL ≈ 7 MHz, the lock-in time is ~ 1.9 µs.  With 
+
+the startup time of the power oscillator less than 100 ns, the total overhead time is ~ 2 µs.  
+
+If the overhead time accounts for 10% of the symbol period, the transmitter can support 
+
+OOK modulation at a data rate of 50 kbps with 32% efficiency while delivering 0 dBm of 
+
+output power.  Assuming equal probability of transmitting a ‘1’ and ‘0’, the transmitter’s 
+
+power consumption is 1.6mW.  The modulated OOK waveform is shown in Fig. 4.12.   
+
+Higher  data  rate  can  be  obtained  by  increasing  the  injected  signal.    When  the  bias 
+
+current increases to 516µA, the lock-in time decreases to ~ 540ns.  Thus, the overhead 
+
+time is reduced to 640 ns and the transmitter can support data rates up to ~ 156 kbps.  
+
+With  a  higher  bias  current,  the  transmitter  efficiency  is  reduced  to  28%  and  the 
+
+transmitter active power consumption is increased to 1.9mW for 50% OOK data.   
+
+3.0
+
+2.5
+
+)
+s
+µ
+(
+ 
+
+2.0
+
+i
+
+ 
+
+e
+m
+T
+n
+i
+-
+k
+c
+o
+L
+
+1.5
+
+1.0
+
+0.5
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+0.0
+
+100
+
+200
+
+300
+
+400
+
+Bias current of injection locked transistor MA (µA)
+
+500
+
+600
+
+ 
+ 
+
+Fig 4.11: Measured lock-in time of the injection locked transmitter. 
+
+ 
+
+79
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+20µs 
+
+RF Output 
+
+Baseband Data 
+
+Fig 4.12: Waveform of on-off keying data of the injection locked transmitter 
+
+ 
+
+To reduce the lock-in power, a 5-bit capacitor array is used to tune f0 close to f1.  Fig. 
+
+4.13 shows the frequency as a function of the capacitor code.  The array has 103MHz of 
+
+tuning range with ≤ 4 MHz resolution, allowing f0 to be tuned within 2MHz of f1.      
+
+ 
+
+ 
+ 
+
+ 
+
+)
+z
+H
+M
+
+(
+ 
+
+0
+
+ω
+ 
+y
+c
+n
+e
+u
+q
+e
+r
+F
+
+ 
+t
+
+u
+p
+
+t
+
+u
+O
+
+1930
+1920
+1910
+1900
+1890
+1880
+1870
+1860
+1850
+1840
+1830
+1820
+
+ 
+0
+
+4
+
+8
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+
+ 
+20
+Capacitor bit code
+
+12
+
+16
+
+24
+
+28
+
+32
+
+Fig. 4.13: Measured tuning range of capacitor array C1. 
+
+ 
+
+80
+
+Fig 4.14 shows the breakdown of the transmitter’s power budget compared to the direct 
+
+modulation transmitter presented in Chapter 3 with 50% on-off keying modulation.   
+
+Injection Locked Transmitter 
+
+Active Power: 1.9mW 
+Radiated Power: 1mW 
+Data Rate: 156 kbps 
+
+Direct Modulation Transmitter 
+
+Active Power: 1.1mW 
+Radiated Power: 0.5mW 
+
+Data Rate: 50 kbps 
+
+ 
+Power  Osc. power 
+
+(68%) 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+
+FBAR Osc. power 
+
+(5%) 
+
+PA power  
+(60.4%) 
+
+Radiated power 
+
+(28%) 
+
+Osc. power 
+ (16.3%)
+
+Radiated power 
+
+ (23.3%) 
+
+Fig. 4.14: Power budget of (left) injection locked TX, (right) direct modulation TX. 
+
+In the injection locked transmitter, the pre-PA power accounts for only 5% of the total 
+
+power and the transmitter efficiency is improved to 28%.  With such low active power, 
+
+the FBAR oscillator can remain active throughout data transmission.  This allows for a 
+
+higher data rate since it is not limited by the long startup time of the FBAR oscillator.  
+
+With  higher  data  rate,  the  active  time  is  reduced,  leading  to  lower  average  transmitter 
+
+power consumption.   
+
+The efficiency of the injection locked transmitter is still limited by the power loss in the 
+
+power  oscillator.    This  can  be  reduced  by  using  an  active  antenna  as  illustrated  in  the 
+
+active antenna transmitter presented in the next chapter.         
+
+ 
+
+81
+
+ 
+ 
+ 
+Chapter 5 
+ 
+Active Antenna Transmitter 
+
+ 
+ 
+ 
+ 
+
+By  using  fewer  pre-PA  circuits  and  less  complex  modulation  schemes,  the  direct 
+
+modulation  transmitter  has  a  much  lower  pre-PA  power  than  the  direct  conversion 
+
+transmitter.  Further reduction in pre-PA power is accomplished by using the injection 
+
+locked transmitter presented in the last chapter.  With the pre-PA power reduced to less 
+
+than the radiated power, increasing the PA efficiency becomes effective in improving the 
+
+overall transmitter efficiency.          
+
+The PA efficiency is limited by losses in the device and matching network.  Device loss 
+
+is  minimized  by  reducing  the  product  of  the  voltage  across  the  device  and  the  current 
+
+through  it  (i.e.  Ids*Vds).    Typically,  higher  device  efficiency  requires  larger  drive 
+
+requirement, which increases the pre-PA power.  Thus, the optimal transmitter efficiency 
+
+is obtained by co-designing the pre-PA circuits and the low power amplifier concurrently 
+
+as discussed in Chapter 3.    
+
+Matching network loss is typically limited by the Q factor of the inductors.  Fig. 5.1 
+
+shows  the  efficiency  of  the  matching  network  as  a  function  of  the  inductor  Q  for  the 
+
+ 
+
+82
+
+direct modulation transmitter presented in Chapter 3, assuming that losses in the on-chip 
+
+capacitors are negligible.  On chip inductors have Q-factors of ~5 to 10, resulting in a 
+
+matching  network  efficiency  of  only  20%  to  30%.    Even  with  higher  Q  bond  wire 
+
+inductors (Q ~ 25 – 30), the matching network still accounts for about 45% to 50% of the 
+
+power loss.  To reduce loss, the matching network can be incorporated into the antenna, 
+
+giving rise to the active antenna transmitter.  By using an electrically large antenna, the 
+
+antenna  loss  can  be  reduced  to  negligible  levels.    This  results  in  higher  transmitter 
+
+efficiency.  
+
+ 
+
+ 
+
+ 
+
+)
+
+%
+
+(
+ 
+y
+c
+n
+e
+c
+i
+f
+f
+
+i
+
+             
+
+60
+
+50
+
+40
+
+30
+
+20
+
+t
+
+E
+ 
+k
+r
+o
+w
+e
+N
+g
+n
+h
+c
+t
+
+ 
+
+i
+
+ 
+
+ 
+
+ 
+
+ 
+
+a
+M
+
+10
+
+0
+
+5
+
+10
+
+15
+Inductor Q Factor
+
+20
+
+ 
+
+25
+
+30
+
+Fig. 5.1: Matching network efficiency for direct modulation transmitter. 
+
+5.1 Architecture 
+
+The block diagram of the active antenna transmitter [Chee06b] is shown in Fig. 5.2.  
+
+The transmitter utilizes two distinct high Q FBAR oscillators to create two different RF 
+
+ 
+
+83
+
+channels  at  ~1.9  GHz.    The  two  channels  are  multiplexed  together  in  the  low  power 
+
+amplifier.  This technique is scalable to realize  multiple  channels.  The  use  of  multiple 
+
+FBAR  oscillators  are  preferred  over  frequency  tuning  of  the  FBAR  oscillator  as  it  is 
+
+difficult to obtain a wide tuning range without loading the high Q resonator significantly. 
+
+The low power amplifier is co-designed with the antenna whose impedance is designed 
+
+to provide the optimal impedance needed to maximize the PA device efficiency.  This 
+
+eliminates  the  matching  network  and  its  losses  and  improves  the  overall  transmitter 
+
+efficiency.  With only two active circuit blocks per channel, it is less complex than the 
+
+direct conversion transmitter and has a lower pre-PA power.  
+
+ 
+
+Baseband data 
+
+ 
+
+ 
+
+Osc 1 
+ 
+
+ 
+
+ 
+ 
+Osc 2 
+ 
+
+Low Power 
+Amplifier 
+
+Active 
+Antenna 
+
+Fig. 5.2: Block diagram of the two channel active antenna transmitter.  
+
+The  baseband  data  is  directly  modulated  onto  the  RF  carrier  using  OOK  by  power 
+
+cycling the transmitter.  The FBAR oscillator and low power amplifier are switched on 
+
+and  off  through  switches  in  their  biasing  circuits.    Frequency  shift  keying  can  be 
+
+employed  by  toggling  between  the  two  oscillators  with  the  baseband  data  to  create  a 
+
+single channel FSK transmitter.              
+
+ 
+
+84
+
+The data rate is determined by the startup time of the FBAR oscillator.  To reduce the 
+
+startup time, the FBAR oscillator employs two amplifiers during start up but uses only 
+
+one of them to sustain steady state oscillation.  Since the startup time accounts for ~10% 
+
+of the bit period, this allows for a higher data rate without a significantly increase in the 
+
+pre-PA power.  A higher data rate reduces the active time and hence the average power 
+
+consumption. 
+
+ 
+
+5.2 Active Antenna 
+
+5.2.1 Design Considerations 
+
+Incorporating the matching network into the antenna requires the antenna to provide the 
+
+optimal  impedance  to  maximize  the  PA  efficiency.    The  antenna  needs  to  provide  a 
+
+resistance  and  an  inductance  at  its  input  terminal  as  shown  in  Fig.  5.3.    With  an 
+
+electrically large antenna (size >> λ/10), antenna loss is minimized and the resistive load 
+
+is mainly due to the transformed radiation resistance at the antenna input terminals.  The 
+
+inductive component is needed to resonate with the capacitances at the output node of the 
+
+PA.    In  addition,  the  antenna  needs  to  provide  a  DC  path  for  the  PA  and  an  omni-
+
+directional radiation pattern as the location of the node’s neighbors are random.      
+
+With  the  electrical  and  radiation  pattern  requirements,  several  types  of  antenna  (e.g. 
+
+dipole, loops, dielectric resonator and printed antenna) can be employed.  However, to 
+
+reduce  cost,  the  printed  antenna  is  an  attractive  option  as  the  printed  circuit  board  is 
+
+relatively inexpensive compared to other antennas.  In addition, it has a low profile and 
+
+has a small form factor when properly designed. 
+
+ 
+
+85
+
+Non-50Ω 
+antenna 
+
+Vdd
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+RF input 
+
+Low Power 
+Amplifier 
+
+ 
+
+Fig. 5.3: PA-antenna co-design 
+
+         
+
+5.2.2 Printed Inverted L Antenna (PILA) 
+
+To  meet  all  the  antenna  requirements,  the  printed  inverted  L  antenna  (PILA)  is 
+
+proposed.    Its  principle  of  operation  can  be  understood  using  the  asymmetric  coplanar 
+
+folded dipole shown in Fig 5.4.  The dipole consists of a driven strip of width W1 and a 
+
+parallel strip of width W2.  Both strips are shorted together at both ends.   
+
+The input impedance of the antenna can be obtained using the transmission line model 
+
+[Uda54].  In this model, the total current flowing into the dipole Iin is decomposed into 
+
+the transmission line mode current It and the antenna mode current Id.  In the transmission 
+
+line mode, the current in the two strips flows in the opposite direction and no radiation 
+
+occurs.  The antenna acts as a shorted transmission line with length L/2 and It is given as: 
+
+ 
+
+I
+
+t
+
+=
+
+V
+Z
+2
+
+T
+
+ 
+
+(5.1) 
+
+where Zt = jZ0tan(k0L) is the input impedance of a shorted transmission line, Z0 is the 
+
+transmission line characteristic impedance and k0 is its wave number.   
+
+ 
+
+86
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+w1  w2 
+
+b 
+
+Iin 
+
++ 
+V 
+- 
+
+Virtual 
+ground
+
+2L 
+
+= 
+
+It 
+
++ 
+V/2 
+-
+
+It 
+
+Ia 
+
+-
+V/2 
++ 
+
++ 
+
++ 
+V/2 
+-
+
+aIa 
+
++
+V/2 
+- 
+
+Asymmetric 
+Folded Dipole 
+
+Transmission 
+
+Line Mode 
+
+Antenna 
+
+Mode 
+
+L 
+
+Iin 
+
++ 
+V 
+-
+
+Feed  Ground Short 
+
+x 
+
+z 
+
+y 
+
+Ground 
+Plane 
+
+Short 
+
+Tuning Shunt 
+
+Fig. 5.4: Design of the printed inverted L antenna (PILA). 
+
+87
+
+In  the  antenna  mode,  the  dipole  radiates  with  an  equivalent  current  of  Id  =  (1+a)Ia, 
+
+where Ia is the current in the driven strip and a is the ratio of the current flowing in the 
+
+two strips.  Hence the asymmetric dipole can be modeled as an equivalent dipole with an 
+
+equivalent radius and Ia can be expressed as [Lampe85] 
+
+ 
+
+I
+
+a
+
+=
+
+V
+Za
+2)
+
+d
+
+ 
+
+1( +
+
+(5.2) 
+
+where Zd is the dipole impedance of a equivalent dipole.  Since the total current Iin = It + 
+
+Ia and hence the input impedance of the antenna Zin is given as   
+
+ 
+
+Z
+
+in
+
+=
+
+1(2
+1(
++
+
+ZZa
+)
++
+t
+Za
+Z
+)
+2
+2
+
+d
++
+
+2
+
+d
+
+. 
+
+t
+
+(5.3) 
+
+Fig.  5.4  shows  that  the  folded  dipole  is  symmetrical  about  the  source  and  a  virtual 
+
+ground exists at the center of the parallel strip.  Thus, the size of the folded dipole can be 
+
+reduced  by  half  by  connecting  the  virtual  ground  to  an  existing  ground  plane  in  the 
+
+printed circuit board.  This also provides a DC path for the power amplifier.  To further 
+
+reduce the antenna area, the antenna’s arm is bent into the L-shape as shown in Fig. 5.4.   
+
+To obtain the optimal impedance for the PA, a tuning shunt is added to the antenna.  
+
+The input impedance is determined by the antenna length L, the impedance ratio a, the 
+
+PCB dielectric constant (εr ~ 4.4 for FR4) and the position of the tuning shunt.  For the 
+
+PILA  antenna,  when  L  ~  λ/4,  the  impedance  loci  form  a  loop  around  the  desired 
+
+impedance  on  the  Smith  chart  as  shown  in  Fig.  5.5.    This  provides  a  wide  impedance 
+
+bandwidth of ~ 340MHz which helps to mitigate the effects due to manufacturing and 
+
+environmental variations. The antenna is also electrically large when L ~ λ/4, resulting in 
+
+a low antenna loss and an antenna efficiency of 98%.  
+
+ 
+
+88
+
+Fig 5.5: Impedance loci of the PILA antenna. 
+
+ 
+
+ 
+
+With  L  ~  λ/4,  the  real  and  imaginary  components  of  the  antenna  impedance  are 
+
+determined to the first order by the impedance ratio a and the distance of the tuning shunt 
+
+from the input terminals respectively.  The impedance ratio a is adjusted by changing the 
+
+ratio W1/W2.  Extensive electromagnetic simulations using Ansoft HFSS are used to fine 
+
+tune the impedance to the final value.  
+
+The PILA antenna has a near omni-directional radiation pattern with a peak directivity 
+
+of  1.734  as  shown  in  Fig.  5.6.    With  this  radiation  pattern,  the  node  is  capable  of 
+
+communicating  with  all  neighboring  nodes  except  for  nodes  that  lies  along  its  x-axis, 
+
+where the antenna suffers a deep null.         
+
+ 
+
+ 
+
+ 
+
+89
+
+ 
+
+ 
+
+z 
+
+x-z plane
+
+y-z plane
+
+x 
+
+y 
+
+x-y plane 
+
+ 
+
+Fig. 5.6: Radiation pattern of the PILA antenna. 
+
+5.3 Fast Startup FBAR Oscillator 
+
+For a given packet size and packet rate, a higher data rate minimizes the active time and 
+
+lowers the average transmitter power consumption.  With OOK modulation, the data rate 
+
+is  limited  by  the  startup  time  of  the  FBAR  oscillator.    To  reduce  the  startup  time,  the 
+
+FBAR oscillator employs an additional amplifier consisting of M1-M2 during startup (see 
+
+Fig. 5.7).  This increases the negative resistance and reduces the startup time constant.  
+
+Once the oscillator reaches steady state, VC1 goes low and transistors M5, S1 and S1 are 
+
+turned off, and only one amplifier stays active to sustain steady state oscillation.  Since 
+
+the  startup  time  accounts  for  only  10%  of  the  bit  period,  this  improves  the  data  rate 
+
+significantly with only a slight increase in pre-PA power.  A higher data rate reduces the 
+
+active time and average transmitter power consumption.        
+
+ 
+
+ 
+
+90
+
+M1 
+
+S1 
+
+S2 
+
+M1 
+
+M5 
+
+ 
+VDD 
+ 
+
+ 
+
+ 
+
+ 
+
+Rb 
+
+FBAR 
+
+ 
+C1 
+
+q
+
+VC2 
+
+ 
+
+ 
+
+M3 
+
+M4 
+
+M6 
+
+VC1 
+
+Fig. 5.7: Schematic of the fast startup FBAR oscillator. 
+
+The  FBAR  oscillator  employs  complementary  gain  stages  to  reuse  its  bias  current, 
+
+reducing  the  current  consumption  by  half  while  achieving  the  same  gm.    Subthreshold 
+
+MOSFET operation is used to obtain a higher current efficiency (gm/Id).  A large resistor 
+
+Rb is used to bias the transistors at Vdd/2 to maximize the voltage swing and minimize its 
+
+loading on the FBAR. The oscillator employs a 3-bits capacitor array C1 for frequency 
+
+tuning to mitigate process variations. 
+
+ 
+
+5.4 Low Power Amplifier / Antenna Co-design 
+
+The schematic of the low power amplifier is shown in Fig. 5.8.  The PA consists of two 
+
+transistors  M1-M2  sharing  a  common  drain  node  and  their  biasing  circuits.    The  RF 
+
+signals from the two FBAR oscillators drives transistors M1 and M2 directly.  For OOK 
+
+modulation, the data is used to power cycle the PA via the gate bias of M1 and M2.  With 
+
+ 
+
+91
+
+only  one  channel  being  employed  at  any  instant,  M1  and  M2  will  not  be  active 
+
+concurrently.  A 5 bits capacitor array C1 is used for tuning the output tank frequency to 
+
+mitigate manufacturing variations. 
+
+Vdd 
+ 
+ 
+
+Antenna 
+
+M2 
+
+RFin2 
+
+Vbias2 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+M1 
+
+C1 
+
+RFin1 
+
+Vbias1 
+
+Fig. 5.8: Schematic of the low power amplifier. 
+
+The LPA is co-designed with the printed inverted L antenna (PILA) to eliminate the 
+
+matching network and its loss. The antenna provides an admittance of (5-j17)x10-3 Ω-1 to 
+
+maximize  the  PA  efficiency.        Eliminating  the  matching  network  loss  also  indirectly 
+
+reduces  the  power  consumption  of  the  FBAR  oscillator.    This  is  because  smaller 
+
+transistors can now be used to provide the same output power to the antenna, resulting in 
+
+less loading on the FBAR oscillator.   
+
+The maximum voltage swing at the drain node is 2*Vdd.  With a maximum voltage 
+
+rating  of  1.3V  for  this  process,  the  supply  voltage  is  chosen  to  be  ~0.65V.    This 
+
+eliminates the need for a cascode transistor.  To achieve the optimal tradeoff between the 
+
+PA efficiency and its drive requirements, the PA is co-designed with FBAR oscillator. 
+
+ 
+
+92
+
+Multiplexing  the  signal  at  the  drain  node  of  the  PA  transistors  to  create  multiple 
+
+channels is preferred over other techniques shown in Fig 5.9 because it maximizes the 
+
+isolation  between  the  FBAR  oscillators  and  preserves  the  Q  factor  of  the  FBAR 
+
+resonators.    Multiplexing  the  signal  at  the  gate  reduces  the  isolation  between  FBAR 
+
+resonators while using a switched resonator topology reduces the Q-factor of the FBAR 
+
+resonator due to the series resistance of the switch.  With the high Q factor of the FBAR 
+
+resonator, a large tunable capacitor is needed to obtain a wide tuning range and it will 
+
+load the FBAR resonator significantly and results in higher power consumption. 
+
+ 
+
+LPA input 
+devices 
+
+(a) Multiplex at the drain of LPA device 
+
+(c) Switched resonators topology 
+
+ 
+
+ 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+LPA input 
+devices 
+
+ 
+
+ 
+
+ 
+
+ 
+
+LPA input 
+devices 
+
+(b) Multiplex at the gate of LPA device 
+
+LPA input 
+devices 
+
+(d) Frequency tuning using a capacitor 
+
+Fig. 5.9:  Techniques to create multiple channels with FBAR oscillators. 
+
+ 
+
+93
+
+5.5 Transmitter Prototype 
+
+5.5.1 Implementation 
+
+The  transmitter  is  implemented  in  a  standard  0.13µm  CMOS  process  from  ST 
+
+Microelectronics.    The  die  area  is  0.8  x  1.85  mm2  and  it  includes  the  active  antenna 
+
+transmitter and some test circuits.  The transmitter occupies 0.8 x 1.2 mm2.  The CMOS 
+
+die  and  two  FBAR  resonators  are  assembled  on  a  test  board  using  chip-on-board 
+
+technology as shown in Fig. 5.10.  Two short bond wires are used to connect the FBAR 
+
+resonator  to  the  CMOS  die  to  minimize  any  unwanted  spurs.    The  transmitter  also 
+
+includes  a  serial  to  parallel  interface  (SPI)  block  to  reduce  the  number  of  bond  pads 
+
+needed for the control signals.   
+Bond 
+wires 
+
+ 
+
+TX output 
+to antenna 
+
+Bond 
+wires 
+
+FBAR 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+
+FBAR 
+
+ 
+
+TX 
+ 
+
+Test 
+
+circuits 
+
+Fig. 5.10: Die photo of the active antenna transmitter. 
+
+5.5.2 Measured Results 
+
+ 
+
+The transmitter efficiency and power consumption as a function of output power with 
+
+0.65V supply are shown in Fig. 5.11.  The transmitter achieves a maximum efficiency of 
+
+ 
+
+94
+
+46%  while  delivering  1.2mW.    It  consumes  1.35mW  when  transmitting  OOK  data 
+
+assuming equal probability of transmitting a ‘1’ and ‘0’.  The peak drain efficiency of the 
+
+PA is 63%.  The efficiency of the transmitter remains above 41% as the output power 
+
+varies from 0.85mW to 1.45mW, allowing for efficient power control.   
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+)
+
+%
+
+(
+ 
+y
+c
+n
+e
+c
+i
+f
+f
+
+i
+
+E
+
+ 
+r
+e
+
+t
+t
+i
+
+m
+s
+n
+a
+r
+T
+
+50
+
+48
+
+46
+
+44
+
+42
+
+40
+
+38
+
+36
+
+34
+
+32
+
+30
+
+1.8
+
+1.7
+
+1.6
+
+1.5
+
+1.4
+
+1.3
+
+1.2
+
+1.1
+
+1.0
+
+0.9
+
+T
+r
+a
+n
+s
+m
+
+i
+t
+t
+
+e
+r
+ 
+
+P
+o
+w
+e
+r
+ 
+
+a
+
+t
+ 
+
+ 
+
+5
+0
+%
+O
+O
+K
+
+ 
+(
+
+m
+W
+
+)
+
+0.7
+
+0.8
+
+0.9
+
+ 
+Fig. 5.11: Transmitter efficiency and power consumption as a function of output power. 
+
+1.1
+
+1.0
+Output power (mW)
+
+1.2
+
+1.3
+
+1.4
+
+1.5
+
+The startup transient of the fast startup FBAR oscillator is shown in Fig. 5.12.  During 
+
+oscillator startup, both VC1 and VC2 are high and the oscillator employs two amplifiers to 
+
+obtain a shorter startup time.  Once the oscillator reaches its steady state, VC1 is set to low 
+
+and only one amplifier is used to sustain the oscillation.  Using this technique, the startup 
+
+time is reduced from 580ns to 300ns without significant increase in the pre-PA power.  If 
+
+the oscillator startup accounts for 10% of the symbol period, it is capable of supporting a 
+
+maximum data rate of 330kbps.   
+
+ 
+
+95
+
+Due to the high Q FBAR, clean and stable RF carriers at 1.863GHz and 1.916GHz are 
+
+obtained.  Figure  5.13  shows  the  measured  phase  noise  performance  of  the  FBAR 
+
+oscillator.  The measured phase noise is -106dBc/Hz at 10kHz offset and -124dBc/Hz at 
+
+100kHz  offset.    The  excellent  phase  noise  performance  is  primarily  due  to  the  high  Q 
+
+FBAR resonators.   
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+ 
+
+TX output 
+
+VC1 
+
+VC2 
+
+100ns/div 
+
+ 
+
+Fig. 5.12: Transient waveform of the fast startup oscillator. 
+
+-106 dBc/Hz 
+
+-124 dBc/Hz 
+
+Fig. 5.13: Phase noise performance of the FBAR oscillator 
+
+96
+
+The  breakdown  of  the  power  budget  of  the  active  antenna  transmitter  and  direct 
+
+modulation transmitter is shown in Fig. 5.14.    
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+Active Antenna Transmitter 
+
+Active Power: 1.35mW 
+Radiated Power: 1.2mW 
+
+Data Rate: 330 kbps 
+
+Direct Modulation Transmitter 
+
+Active Power: 1.1mW 
+Radiated Power: 0.5mW 
+
+Data Rate: 83 kbps 
+
+PA power  
+(27.1%) 
+
+Osc. power 
+ (27.2%)
+
+PA power  
+(60.4%) 
+
+Radiated power 
+
+ (45.7%) 
+
+Osc. power 
+ (16.3%)
+
+Radiated power 
+
+ (23.3%) 
+
+Fig. 5.14: Power budget of (left) active antenna TX, (right) direct modulation TX. 
+
+By  co-designing  the  LPA  with  the  antenna  and  eliminate  the  matching  network,  the 
+
+power  loss  in  the  PA  is  reduced  to  27.1%  and  nearly  half  of  the  transmitter  power 
+
+consumption is delivered to the antenna.  This results in a higher efficiency transmitter.  
+
+Due to the faster oscillator startup time, the data rate of the active antenna transmitter is 
+
+about 4 times higher than of the direct modulation transmitter.  This reduces the active 
+time and average transmitter power consumption.      
+
+ 
+ 
+
+ 
+
+97
+
+ 
+ 
+ 
+Chapter 6 
+ 
+Wireless Transmit Sensor Node 
+
+ 
+ 
+ 
+ 
+
+Three different low power transmitters for wireless sensor network have been designed 
+
+and implemented in the previous chapters.  Among the transmitters, the active antenna 
+
+transmitter has the highest efficiency, data rate and the lowest average transmitter power 
+
+consumption.  As such, it is most feasible for integration into a small form factor wireless 
+
+transmit sensor node.   
+
+The  38  x  25  x  8.5  mm3  self  contained  sensor  node  operates  on  two  rechargeable 
+
+batteries  and  it  has  power  conversion  circuits,  a  low  power  microcontroller,  an  active 
+
+antenna transmitter, a PILA antenna and three sensors to measure temperature, humidity, 
+
+tilt and acceleration.    The batteries can be recharged from a variety of sources including 
+
+solar cells and other energy scavenging sources. 
+
+This  chapter  is  organized  as  follows:  It  first  gives  an  overview  of  the  system  and 
+
+describes the design of each of the sub-system. The implementation of the sensor node is 
+
+then presented.  It concludes with a discussion on the performance of the sensor node. 
+
+ 
+
+ 
+
+98
+
+6.1 Sensor Node Design  
+
+6.1.1 System Overview 
+
+The schematic of the wireless transmit sensor node is shown in Fig. 6.1.  
+
+Regulator 
+
+NiMH 
+batteries 
+
+ 
+ 
+ 
+ 
+Solar 
+ 
+cell 
+ 
+
+ 
+
+Antenna 
+
+Battery 
+Monitor 
+
+Sensors 
+
+Regulator 
+
+Micro-controller
+
+Level 
+
+converter 
+
+Transmitter
+
+Fig. 6.1: Block diagram of the wireless transmit sensor node. 
+
+A charge pump regulator is used to regulate the power scavenged by the solar cell and 
+
+charge the two NiMH batteries, which in turns power the rest of the system. A battery 
+
+monitor continuously monitors the state of the battery and shuts down the system once 
+
+the battery is discharged.  This allows the battery to recharge before restarting the system 
+
+again.  The node is equipped with sensors to measure temperature, humidity, acceleration 
+
+and tilt.  A low power microcontroller interfaces with the sensors and the RF transmitter. 
+
+The sensors and transmitter are power gated to reduce the standby power.       
+
+ 
+
+6.1.2 Microcontroller 
+
+The sensor node uses the MSP430F1232 ultra low power micro-controller from Texas 
+
+Instrument [TI04].  The block diagram of the microcontroller is shown in Fig. 6.2.  
+
+ 
+
+99
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+Fig. 6.2: Block diagram of MSP4301232 microcontroller. 
+
+The 16-bit RISC microcontroller features 8KB of FLASH memory and 256B of RAM 
+
+with 125ns of instruction time.  It has a clock module that provides a low accuracy clock 
+
+using a digital control oscillator and a precision clock using a crystal oscillator and an 
+
+external crystal (32kHz to 8MHz).  In this design, the crystal oscillator with a surface 
+
+mount 32kHz crystal is used to allow for a lower standby power and to reduce timing 
+
+variations caused by supply and temperature fluctuations. The microcontroller also has a 
+
+16-bits  watchdog  timer  and  a  16-bits  timer  with  extensive  interrupt  capability  that 
+
+supports multiple capture/compares and interval timing.  These timers are used to provide 
+
+a time reference to coordinate the events in the sensor node.    
+
+To  interface  with  the  sensors  and  RF  transmitter,  the  microcontroller  has  22  general 
+
+purpose  I/O  and  a  built-in  10-bit,  200  ksps  A/D  converter  with  an  internal  reference, 
+
+sample and hold and data transfer controller.  The I/O supports digital signals from 0V to 
+
+ 
+
+100
+
+Vdd-0.25V. 
+
+  With 
+
+the 
+
+internal  A/D  converter  and  general  purpose  I/O, 
+
+the 
+
+microcontroller  is  capable  of  interfacing  with  sensors  having  both  digital  and  analog 
+
+outputs.    The  microcontroller  also  has  a  built-in  serial  communication  interface  that 
+
+supports UART and SPI protocol. 
+
+To reduce power consumption, the microcontroller has 5 power saving modes.  In its 
+
+lowest  power  saving  mode  (LPM4),  the  clocks,  digital  controlled  oscillator,  crystal 
+
+oscillator and CPU are disabled.  In this case, the microcontroller has to be wakened up 
+
+by  the  sensors  via  interrupts  (i.e.  triggered  by  external  events).    To  wake  up  the 
+
+microcontroller  at  a  preset  time,  a  time  base  has  to  be  provided.    This  is  achieved  by 
+
+operating  the  microcontroller  in  its  second  lowest  power  saving  mode  (LPM3)  where 
+
+only its auxiliary clock is enabled and the rest of the system is disabled.  In the active 
+
+mode, the CPU consumes 200µA/MHz and takes 6µs to wake up from standby.   
+
+ 
+
+6.1.3 Sensors 
+
+The  sensor  node  is  equipped  with  three  sensors  to  measure  acceleration,  tilt, 
+
+temperature  and  humidity.    It  uses  the  3-axis  LIS3L02AQ  linear  accelerometer  from 
+
+STMicroelectronics  [ST04].    The  accelerometer  is  capable  of  measuring  accelerations 
+
+over a maximum bandwidth of 4kHz for the X and Y axis and 2.5kHz for the Z-axis and 
+
+has  a  user  selectable  full  scale  of  ±2g  or  ±6g.    It  includes  a  sensing  element  and 
+
+integrated circuits that process the raw signals from the sensing element and provide an 
+
+analog output.  The accelerometer consumes ~ 850µA in the active mode and 2µA during 
+
+standby.   
+
+ 
+
+101
+
+The  sensor  node  is  also  equipped  with  the  D6B  tilt  sensor  from  Omron  [Omron05].  
+
+The D6B, consisting of a Hall integrated circuit and a magnet, is capable of detecting tilt 
+
+over a range of 45 to 75 degrees in right and left inclinations.  It consumes ~ 10 µA and 
+
+provides a digital output which interfaces with the microcontroller directly.      
+
+The  sensor  node  employs  the  SHT11  sensor  from  Sensiron  [Sensiron05]  to  measure 
+
+temperature and humidity.  The SHT11 includes a capacitive polymer humidity sensor, a 
+
+bandgap temperature sensor, a 14 bit A/D converter and a 2-wire serial interface circuit to 
+
+provide a digital output.  The humidity sensor is capable of measuring 0 to 100% relative 
+
+humidity  and  the  temperature  sensor  has  a  range  of  -40°C  to  124°C.    The  module 
+
+consumes ~550µA during measurement and 0.3µA in the sleep mode.   
+
+ 
+
+6.1.4 Power Train 
+
+The power train consists of a solar cell, a charge pump regulator, a battery monitor and 
+
+two NiMH rechargeable batteries.  The node uses a 25 x 32 mm2 thin film solar module 
+
+from  SolarWorld  [SolarWorld05].    This  solar  module  is  rated  to  provide  15mA  at  3V 
+
+under  one  full  sun.    However,  the  available  solar  power  is  much  less  under  indoor 
+
+conditions.    Figure  6.3  shows  the  measured  current-voltage  characteristics  of  the  solar 
+
+cell and its output power as a function of load current under typical indoor conditions. 
+
+Under ambient lighting, the short circuit current is only ~ 45µA and the maximum output 
+
+power is ~ 70µW.  Under fluorescent light, the short circuit current improves to ~ 60µA 
+
+and the maximum output power increases to ~ 100µW.   
+
+ 
+
+102
+
+2.5
+
+2.0
+
+1.5
+
+1.0
+
+0.5
+
+)
+
+V
+
+(
+ 
+e
+g
+a
+t
+l
+o
+V
+
+ 
+t
+u
+p
+t
+u
+O
+
+0.0
+
+0
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+100
+
+80
+
+60
+
+40
+
+20
+
+O
+u
+t
+p
+u
+t
+ 
+
+P
+o
+w
+e
+r
+ 
+(
+µ
+W
+
+)
+
+50
+
+60
+
+0
+
+70
+
+ Fluorescent light
+ Ambient light
+
+10
+
+20
+
+30
+
+40
+
+Output Current (µA)
+
+Fig. 6.3: Output power and I-V characteristics of solar cell under indoor conditions. 
+
+Since the output voltage of the solar cell fluctuates significantly under different load 
+
+conditions, it has to be regulated.  Thus, it is connected to the TPS60313 high efficiency 
+
+charge pump regulator from Texas Instruments [TI01] to provide a regulated 3V output.  
+
+The TPS60313 features a snooze mode where the quiescent current of the circuits and the 
+
+feedback  sampling  rate  is  dramatically  reduced  at  light  loads  (<  2mA),  resulting  in  a 
+
+much higher conversion efficiency as shown Fig. 6.4.  This is critical for this application 
+
+since the available power from the solar cell is limited and it is crucial to maintain high 
+
+conversion  efficiency.    The  regulator  accepts  input  voltages  ranging  from  0.8V  to  2V, 
+
+which covers the desired operating range of the solar cell in indoor conditions (i.e. at high 
+
+output  power).    To  prevent  electrical  overstress  at  the  regulator  input  (e.g.  in  outdoor 
+
+conditions), a zener diode can be used to clamped the input voltage at a maximum of 2V.  
+
+The  charge  pump  regulator  requires  only  5  small  capacitors  and  does  not  need  any 
+
+inductor, which results in a compact footprint.   
+
+ 
+
+103
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Fig. 6.4: Conversion efficiency of TPS60313 charge pump regulator. 
+
+ 
+
+The 3V charge pump regulator charges the two 18mAh NiMH rechargeable batteries 
+
+via  a  resistor.    The  two  NiMH  batteries  are  connected  in  series  to  provide  an  output 
+
+voltage  of  2.4V  (~2.8V  when  fully  charged)  to  satisfies  the  operating  voltage  of  the 
+
+microcontroller  and  sensors.    The  battery  has  a  very  small  form  factor,  each  having  a 
+
+diameter and height of only 8mm and 5.3mm respectively [Godisa05]. 
+
+The state of the battery is monitored using the MAX6434 battery monitor from Maxim 
+
+[Maxim03].  The battery monitor employs a hysteresis that asserts its output when the 
+
+power  supply  voltage  drops  below  a  specified  low  threshold  (e.g.  2.35V).    This  shuts 
+
+down the entire node and allows the solar cell to recharge the battery.  When the supply 
+
+voltage rises above a specified high threshold (e.g. 2.45V), the battery monitor de-asserts 
+
+its  output  with  a  140ms  timeout  period.    The  timeout  period  ensures  that  the  supply 
+
+voltage has stabilized before the microcontroller and sensors are enabled.  The MAX6434 
+
+has user adjustable thresholds and consumes only 1µA.          
+
+ 
+
+104
+
+6.1.5 RF Transmitter 
+
+The  sensor  node  employs  the  active  antenna  transmitter  with  the  PILA  antenna 
+
+presented in Chapter 5 for data transmission.  The active antenna transmitter requires a 
+
+supply voltage of 0.65V.  To convert the 2.4V battery supply to 0.65V, a LTC3020 linear 
+
+regulator  from  Linear  Technology  [Linear04]  is  used.      Linear  regulator  is  employed 
+
+because  existing  commercial  off  the  shelf  switching  regulators  do  not  provide  output 
+
+voltages as low as 0.65V.     
+
+The logic high output voltage of the microcontroller general purpose I/O is Vdd-0.25.  
+
+With  a  microcontroller  supply  of  2.4V,  this  exceeds  the  voltage  rating  (~1.3V)  of  the 
+
+transistors  in  the  active  antenna  transmitter.    To  interface  with  the  transmitter,  the 
+
+SN74AVC8T45 level converter from Texas Instrument [TI05] is employed.    
+
+ 
+
+6.2 Sensor Node Operation  
+
+Before  the  sensor  node  is  operational,  the  user  has  to  download  the  program  to  the 
+
+microcontroller  FLASH  memory  via  a  JTAG  interface.    The  user  can  configure  the 
+
+system variables such as the duty cycle for each of the sensors and RF transmitter, the 
+
+type of sensors to be used and any pre-processing of the sensor data before transmission.  
+
+Once  the  system  variables  are  set,  further  changes  require  re-programming  of  the 
+
+microcontroller FLASH memory.  
+
+The  state  diagram  of  the  sensor  node  is  shown  in  Fig.  6.5.    The  operation  of  the 
+
+wireless transmit sensor node are governed by 5 states described as follows: 
+
+ 
+
+105
+
+Timer not 
+expires 
+
+CPU Sleep  
+
+Interval Timing 
+
+Timer 
+expires 
+
+Sense/TX 
+
+done 
+
+Prepare for 
+power down 
+
+Battery 
+
+low 
+
+Battery 
+
+low 
+
+CPU Active 
+Reset Timer 
+
+Sense / TX data 
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Battery 
+
+low 
+
+Power down 
+
+Charge batteries 
+
+Battery 
+high 
+
+Initialize variables 
+
+Start Timer 
+
+Battery 
+
+low 
+
+Fig 6.5: State diagram of wireless transmit sensor node. 
+
+1.  Power down.  In the power down mode, the entire system is shutdown except for 
+
+the  charge  pump  regulator  and  the  battery  monitor.    With  only  minimal  circuit 
+
+power consumption, the excess power collected by the solar cell is used to recharge 
+
+the batteries.  The system stays in this state until the battery monitor indicates the 
+
+batteries are sufficiently charged.  
+
+2.  Initialization. Once the batteries are sufficiently charged, the battery monitor de-
+
+asserts its output and the microcontroller boots up, goes into its active mode and 
+
+loads the program from the FLASH memory into its RAM.  The program begins to 
+
+execute  and  initialize  all  the  system  variables.    The  microcontroller  then  sets  its 
+
+timer according to the user defined duty cycle and then goes into sleep.       
+
+106
+
+3.  Sleep.  The CPU and its peripherals remain inactive (except for the timer) until the 
+
+timer  expires.    When  this  occurs,  the  timer  sends  an  interrupt  to  wake  up  the 
+
+microcontroller. 
+
+4.  Active. Once the microcontroller wakes up from its sleep, it will reset and program 
+
+its timer according to the next user defined interval.  Depending on the duty cycle 
+
+of the sensors and transmitter preset by the user, it will either power up the sensors 
+
+to  sense  the  required  sensor  data,  or  activate  the  RF  transmitter  to  send  out  the 
+
+sensor data accumulated in its memory.  For example, the user can configure the 
+
+node  to  sense  the  temperature  once  every  minute  and  humidity  once  every  10 
+
+minutes, and transmit the data once every 20 minutes.   
+
+5.  Prepare  for  Power  Down.  Whenever  the  battery  monitor  senses  that  the  battery 
+
+charge is low, it issues an interrupt to the microcontroller.  Once the microcontroller 
+
+receives this interrupt, it terminates its current activities and broadcasts a message 
+
+indicating  that  its  battery  is  low  and  will  cease  transmission  until  its  battery  is 
+
+recharged.  It then shuts down the entire system and goes into the power down state.   
+
+With  this  mode  of  operation,  the  microcontroller  is  woken  up  at  the  user  defined 
+
+intervals to perform an action and a clock is required to provide a timing reference at all 
+
+times.  Alternatively, the microcontroller can be woken up by the sensors using interrupts 
+
+(triggered  by  external  events)  and  no  timing  reference  is  needed.    This  offers  lower 
+
+average power consumption if the power consumption of keeping the sensor active at all 
+
+times is less than that of the timer.   
+
+ 
+
+107
+
+6.3 Sensor Node Prototype 
+
+6.3.1 Implementation 
+
+The wireless transmit sensor node is implemented using standard printed circuit board 
+
+fabrication and assembly technology as shown in Fig 6.6.  The RF transmitter, consisting 
+
+of the CMOS die and FBAR resonators are assembled using chip on board techniques 
+
+and the PILA antenna is a printed on the PCB.   
+
+Top 
+
+Bottom 
+
+Bottom (with solar cell) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Regulator 
+ 
+
+Tilt 
+sensor 
+
+PILA Antenna 
+
+Regulator  Switches 
+
+TX 
+
+Accelero-
+
+meter
+
+Level 
+
+converter 
+Micro 
+
+controller 
+
+Solar 
+module 
+
+m
+m
+8
+3
+
+Temp & RH 
+
+sensor 
+
+NiMH
+
+JTAG 
+
+XTAL
+
+Fig. 6.6: Photo of the wireless transmit sensor node 
+
+25mm 
+
+The printed circuit board consists of 4 copper layers (Top, Bottom, GND and VDD) 
+
+with minimum line width and spacing of 4 mils each.  Nelco laminate is used to reduce 
+
+substrate losses in the antenna.  To reduce the node size, surface mount components with 
+
+small  packages  are  used  as  much  as  possible  to  minimize  their  footprints.    The 
+
+components are also carefully placed and oriented to minimize long routing traces and to 
+
+eliminate an additional separate routing layer.    Also, large components (e.g. the NiMH 
+
+ 
+
+108
+
+batteries) are placed as far as possible from the antenna to minimize their effect on the 
+
+radiated fields.   
+
+The node measures about 38 x 25 x 8.5 mm3 with the stacked solar module and the 
+
+printed antenna.  The size of the board is chosen such that the solar module fits exactly on 
+
+top of the board with minimal overlap with the antenna.  The bill of material is given in 
+
+Table 6.1. 
+
+Table 6.1: Bill of material of wireless transmit sensor node. 
+
+Item 
+
+Manufacturer 
+
+Quantity 
+
+CMOS transmitter 
+
+FBAR resonators 
+
+Custom 
+
+Agilent Technologies 
+
+Microcontroller (MSP430F1232) 
+
+Texas Instrument 
+
+8 bit level converter (SN74AVC8T245) 
+
+Texas Instrument 
+
+Charge pump regulator (TPS60313) 
+
+Texas Instrument 
+
+Linear regulator (LTC3020) 
+
+Battery Monitor (MAX6434) 
+
+SPST switches (MAX4751) 
+
+Linear 
+
+Maxim 
+
+Maxim 
+
+Accelerometer (LIS3L02AQ) 
+
+ST Microelectronics 
+
+Tilt Sensor (D6B) 
+
+Temp. and humidity sensor (SHT11) 
+
+8 MHz crystal (ABMM2) 
+
+10 pin ZIF connector 
+
+0402 capacitor (2pF, 3pF, 100nF, 1µF) 
+
+0603 capacitor (2.2µF) 
+
+Omron 
+
+Sensiron 
+
+Abracon 
+
+Molex 
+
+Panasonic 
+
+Panasonic 
+
+ 
+
+109
+
+1 
+
+2 
+
+1 
+
+1 
+
+1 
+
+1 
+
+1 
+
+2 
+
+1 
+
+1 
+
+1 
+
+1 
+
+1 
+
+29 
+
+2 
+
+Item 
+
+Manufacturer 
+
+Quantity 
+
+Potentiometer (50kΩ, 1MΩ) 
+
+0402 resistor (0Ω, 200Ω, 50kΩ, 2MΩ) 
+
+Header (2x1, 3x1) 
+
+NiMH batteries (no 13 button cell) 
+
+Solar module (GTF-2x3) 
+
+ 
+
+6.3.2 Measured Results  
+
+Panasonic 
+
+Panasonic 
+
+Digikey 
+
+Godisa 
+
+SolarWorld 
+
+2 
+
+4 
+
+2 
+
+2 
+
+1 
+
+The current consumption of the wireless transmit sensor node in various states is shown 
+
+in Table 6.2.  During the power down mode, the battery monitor consumes only 2 µA, 
+
+allowing most of the scavenged power to be used for charging the battery.  The charge 
+
+pump regulator features high efficiency snooze mode which allows it to maintain at high 
+
+efficiency at low output current levels.  During sleep, the microcontroller is shutdown, 
+
+leaving only the low power 32kHz oscillator to provide an accurate time base.  
+
+Table 6.2: Current consumption of wireless transmit sensor node in various states.  
+
+State 
+
+Supply current 
+
+Power down 
+
+Sleep 
+
+Active (Data processing) 
+
+Active (Transmitting with 50% OOK data ) 
+
+2 µA 
+
+2.8 µA 
+
+0.86 mA 
+
+2.81 mA 
+
+ 
+
+ 
+
+ 
+
+110
+
+With 70µW of available power under indoor condition and the charge pump regulator 
+
+operating at 75% conversion efficiency, the wireless sensor node can operate with a duty 
+
+cycle  of  0.63%.    Under  fluorescence  light,  the  available  power  and  duty  cycle  is 
+
+increased to 100µW and 0.9% respectively.     
+
+Fig. 6.7 shows the received spectrum of the sensor node at about 0.5m away from the 
+
+spectrum  analyzer.    A  clean  output  spectrum  is  obtained.    At  10m  apart,  the  received 
+
+power is -54dBm.          
+
+ 
+
+Fig. 6.7: Output spectrum of the wireless transmit sensor node 
+
+ 
+When  an  antenna  is  brought  into  the  vicinity  of  different  materials,  its  characteristic 
+
+will be perturbed.  Table 6.3 shows the attenuation of the output signal and frequency 
+
+pulling  when  the  wireless  transmit  node  is  placed  on  top  of  different  materials.    It  is 
+
+observed that low dielectric constant materials such as foam, plastic, books and wood do 
+
+ 
+
+111
+
+not cause much attenuation and frequency pulling.  The worst case degradation occurs 
+
+when the node is placed on top of Al plate, which results in 8.7 dB attenuation in the 
+
+signal power and 80kHz shift in the carrier frequency.    
+
+Table 6.3: Environmental effects on wireless transmit sensor node  
+
+Material 
+
+Signal power attenuation  
+
+Carrier frequency shift  
+
+(kHz) 
+
+< 1 kHz 
+
+< 1 kHz 
+
+< 1 kHz 
+
+-1 kHz 
+
+10 kHz 
+
+-37 kHz 
+
+80 kHz 
+
+Foam 
+
+Book  
+
+Wood 
+
+Plastic (PVC) 
+
+Solar cell 
+
+Human hand 
+
+Metal (Aluminium) 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+(dB) 
+
+0.3 
+
+0.8 
+
+0.7 
+
+0.8 
+
+0.8 
+
+7.2 
+
+8.7 
+
+112
+
+ 
+ 
+ 
+Chapter 7 
+ 
+Conclusion 
+
+ 
+ 
+ 
+ 
+7.1 Summary  
+
+The  emerging  field  of  wireless  sensor  networks  could  potentially  have  a  profound 
+
+impact  on  our  everyday  life.    These  ubiquitous  wireless  sensor  networks  allow  us  to 
+
+sense, manage and actuate a vast number of autonomous sensor/actuator nodes embedded 
+
+in  the  fabrics  of  our  daily  living  environment.    Such  ambient  intelligence  provides 
+
+endless possibilities in a huge variety of application scenarios.   
+
+Successfully widespread deployment of wireless sensor networks requires each node to 
+
+(1)  consume  less  than  100µW  of  average  power  for  a  long  usage  lifetime  and  low 
+
+operational cost, (2) cost less than $1 for a low system cost and (3) occupy less than 1cm3 
+
+for seamless integration into our physical environment.  Among these requirements, the 
+
+power constraint is the most challenging.  Since communication accounts for majority of 
+
+power budget in a typical sensor node, it is crucial to have an energy efficient transmitter.   
+
+In  wireless  sensor  network,  the  radiated  power  is  low  (<  1mW)  due  to  short 
+
+communication  distance  (<  10m).    As  such  low  radiated  power,  the  pre-PA  power  is 
+
+ 
+
+113
+
+significant and degrades the transmitter efficiency.  This is the main reason for the low 
+
+efficiency  of  current  state-of-the-art  WSN  transmitters.    Obtaining  an  energy  efficient 
+
+transmitter  at  low  radiated  power  requires  minimizing  (1)  overhead  power,  (2)  circuit 
+
+losses, (3) active time and (4) radiated power.      
+
+Based  on  these  principles,  three  different  1.9GHz  transmitters  are  designed  and 
+
+implemented in ST 0.13µm CMOS process.  The direct modulation transmitter employs 
+
+fewer pre-PA circuits than the traditional direct conversion transmitter and replaces the 
+
+power hungry frequency synthesizer with an ultra low power FBAR oscillator to reduce 
+
+the  pre-PA  power.    The  entire  transmit  chain  is  co-designed  together  to  achieve  a 
+
+transmitter  efficiency  of  23%  at  83  kbps.    The  injection  locked  transmitter  achieves  a 
+
+better tradeoff between the PA efficiency and its pre-PA power by replacing the power 
+
+amplifier with a power oscillator and locking it to a FBAR oscillator to obtain a stable 
+
+carrier  frequency.    A  power  oscillator  is  self-driven  and  does  not  load  the  FBAR 
+
+oscillator significantly. This allows the FBAR oscillator to operate at its minimal power 
+
+consumption  (i.e.  less  pre-PA  power)  and  stays  active  throughout  data  transmission, 
+
+resulting  in  a  higher  data  rate.    The  transmitter  achieves  an  efficiency  of  28%  and 
+
+supports  a  data  rate  up  till  156kbps.    The  active  antenna  transmitter  incorporates  the 
+
+matching  network  into  the  PILA  antenna  to  eliminate  the  matching  network  loss, 
+
+enhancing  the  transmitter  efficiency  to  46%.    It  also  employs  two  amplifiers  during 
+
+oscillator startup to achieve a high data rate of 330 kbps.  
+
+To  demonstrate  a  low  power  and  small  form  factor  sensor  node,  the  active  antenna 
+
+transmitter is integrated into a 38 x 25 x 8.5 mm3 wireless transmit sensor node.  The 
+
+ 
+
+114
+
+sensor  node  operates  on  two  NiMH  batteries  that  are  recharged  by  a  solar  cell  and 
+
+includes  power  conversion  circuits,  a  low  power  microcontroller,  level  converter  and 
+
+three  sensors  to  measure  temperature,  humidity,  tilt  and  acceleration.    The  node 
+
+consumes  2.8  µA  during  sleep  and  2.81mA  when  transmitter  50%  OOK  data.    With 
+
+70µW  of  available  power  under  indoor  conditions,  it  can  operate  with  a  duty  cycle  of 
+
+0.63%.   
+
+By employing low power transmitter architectures, low power circuit design techniques 
+
+and CMOS/MEMS co-design, the work presented this thesis has push the performance 
+
+envelope of WSN transmitters significantly as shown in Fig 7.1.        
+
+  
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+ 
+
+50
+
+40
+
+30
+
+20
+
+10
+
+)
+
+%
+
+(
+ 
+y
+c
+n
+e
+c
+i
+f
+f
+
+i
+
+ 
+
+E
+X
+T
+
+0
+
+10
+
+ 2.4 GHz
+ 1.9GHz
+ 0.9 GHz
+
+Active antenna TX 
+
+Injection-locked TX
+
+Direct modulation TX 
+
+This 
+Work 
+
+Molnar04 
+
+TR1000  CC1000 
+
+Choi03, 
+CC2420
+
+100
+
+Data Rate (kbps)
+
+Cho04 
+
+1000
+
+Fig 7.1: Performance of state-of-the-art WSN transmitters 
+
+115
+
+7.2 Perspectives  
+
+ 
+
+The  research  work  presented  in  this  thesis  has  certainly  brings  us  one  step  closer  to 
+
+realize the full potential of wireless sensor networks.  However, much research is needed 
+
+in the following areas to fully realize the potential of wireless sensor networks: 
+
+1.  Device technology.  Higher performance CMOS transistors and higher Q FBAR 
+
+resonators  are  needed  to  reduce  the  power  consumption  of  the  sensor  node.  
+
+Advancement  in  other  areas  of  MEMS  (e.g.  MEMS  switches,  MEMS  tunable 
+
+antenna, etc) is also needed to overcome the limitations of CMOS technology.   
+
+2.  Packaging and Integration.  System in package (SIP) or above-IC integration in 
+
+essential  to  integrate  high  performance  passives/MEMS  while  keeping  a  small 
+
+form factor.  Three dimensional packaging could also be used to further reduce the 
+
+size of the node.  
+
+3.  Smarter nodes. The capabilities of the node can be extended by incorporating an 
+
+ultra  low  power  receiver,  advanced  power  management  techniques  and  more 
+
+computation power.  It can also be made more adaptive to the environment (e.g. 
+
+adapt  the  antenna  impedance  and  radiation  pattern  according  the  node’s 
+
+surrounding).  
+
+Extending the idea of wireless sensor networks, one could also further explore design 
+
+and  limits  of  much  denser  networks  (i.e.  much  shorter  communication  distance,  say  < 
+
+5cm).    With  such  short  communication  distance,  it  is  possible  to  employ  reactive 
+
+communications  rather  than  radiative  communications,  bringing  new  design  challenges 
+
+and limits.       
+
+ 
+
+116
+
+ 
+ 
+ 
+Bibliography 
+
+ 
+ 
+ 
+ 
+
+[802.15.4] 
+
+IEEE 802.15.4-2003 standard.  www.ieee.org.  May 2003. 
+
+[Alder73] 
+
+[Balanis97] 
+
+[Borkar04] 
+
+R. Alder, “A study of locking phenomena in oscillators”, Proceedings 
+of IEEE, vol 61,  pp. 1380-1385, Oct 1973. 
+
+C. A. Balanis, Antenna Theory: Analysis and Design. 2nd Edition, John 
+Wiley and Sons Inc, 1997. 
+
+S.  Borkar,  “Circuit  techniques  for  subthreshold  leakage  avoidance, 
+control  and  tolerance,”  Digest  of  Technical  Paper,  2004  IEEE 
+Electron Device Meeting (IEDM), pp 421-424, Dec 2004. 
+
+[Bouchaud05] 
+
+J.  Bouchaud,  H.  Wicht,  “RF  MEMS:  status  of  the  industry  and 
+roadmaps,” Digest of Papers, IEEE 2005 Radio Frequency Integrated 
+Circuits (RFIC) Symposium, pp 379-384, Jun 2005. 
+
+[Carpentier05] 
+
+J.  F.  Carpentier,  et  al,  “A  SiGe:C  BiCMOS  WCDMA  Zero-IF  RF 
+front-end using an above-IC BAW filter,”  Digest of Technical Papers, 
+2005 International Solid State Circuits Conference (ISSCC), pp. 394-
+395, Feb 2005.   
+
+[Chee04] 
+
+Y. H. Chee, J. Rabaey, A. M. Niknejad, "A Class A/B Low Power Amplifier 
+for  Wireless  Sensor  Networks",  Proceedings  of  2004  International 
+Symposium on Circuits and Systems 2004 (ISCAS 2004), vol. 4, May 2004, 
+pp 409-412. 
+
+ 
+
+117
+
+[Chee05a]  
+
+[Chee05b] 
+
+[Chee06a] 
+
+[Chee06b] 
+
+[Cheng03] 
+
+[Cho04] 
+
+[Choi03] 
+
+Y.  H.  Chee,  A.  M.  Niknejad,  J.  Rabaey,  “A  sub-100µW  1.9GHz 
+CMOS  oscillator  using  FBAR  resonator”,  Digest  of  Papers,  2005 
+Radio Frequency Integrated Circuits Symposium (RFIC), pp. 123-126, 
+Jun 2004.   
+
+Y.  H.  Chee,  A.M.  Niknejad,  J.  Rabaey,  “An  Ultra-Low  Power  Injection 
+Locked  Transmitter  for  Wireless  Sensor  Networks,”  Proceedings  of  IEEE 
+2005  Custom  Integrated  Circuits  Conference  (CICC  2005),  pp.  797-800, 
+Sep. 2005. 
+
+Y.  H.  Chee,  A.M.  Niknejad,  J.  Rabaey,  “An  Ultra-Low  Power  Injection 
+Locked Transmitter for Wireless Sensor Networks,” accepted for publication 
+in IEEE J. Solid State Circuits, Aug. 2006. 
+
+Y.  H.  Chee,  A.M.  Niknejad,  J.  Rabaey,  “A  46%  Efficient  0.8dBm 
+Transmitter for Wireless Sensor Networks,” accepted for publication in IEEE 
+2006 Symposium on VLSI Circuits (VLSI), Jun. 2006. 
+
+S.  H.  Cheng,  et  at.,  "  Low  phase  noise  integrated  voltage  controlled 
+oscillator  design  using  LTCC  technology",  IEEE  Microwave  and 
+Wireless Components Letters, vol.13, no. 8, pp. 329-331, Aug 2003.  
+
+T. B. Cho, D. Kang, C. H. Heng, B. S. Song, “A 2.4 GHz dual-mode 
+0.18µm CMOS transceiver for Bluetooth and 802.11b”, IEEE J. Solid 
+State Circuits, vol. 39, no. 11, pp. 1916-1926, Nov 2004. 
+
+P.  Choi,  et  al.,  “An  experimental  con-sized  radio  for  extremely  low 
+power  WPAN  (IEEE  802.15.4)  application  at  2.4  GHz”,  Digest  of 
+Technical Papers, 2003 International Solid State Circuits Conference 
+(ISSCC), pp. 92-93, Feb 2003.   
+
+[Crossbow] 
+
+www.xbow.com 
+
+ 
+
+118
+
+[Dubois05] 
+
+[Dust] 
+
+[Enz95] 
+
+M. Dubois, et al., “Integration of High-Q BAW resonators and filters 
+above  IC”,  Digest  of  Technical  Papers,  International  Solid  State 
+Circuits Conference (ISSCC) 2005, pp. 392-393, Feb 2005.  
+
+www.dust-inc.com 
+
+C.  Enz,  F.  Krummenacher,  E.  Vittoz,  “An  analytical  MOS  transistor 
+model valid in all regions of operation and dedicated to low voltage 
+and low current operations,” J. Analog Integrated Circuits and Signal 
+Processing, vol. 8, pp 83-114, June 1995.  
+
+[Godisa05] 
+
+No 13. NiMH batteries data sheet. www.godisa.org 2001. 
+
+[Ham01] 
+
+[Harbor05] 
+
+[Krauss80] 
+
+[Lampe85] 
+
+[Larson00] 
+
+D. Ham, et al., “Concepts and methods in optimization of integrated 
+VCOs”, IEEE Journal of Solid State Circuits, vol. 36, no. 6, pp. 896-
+909, Jun 2001. 
+
+Harbor  Research  Market  Report.  Connecting  to  your  future:  The 
+networking  of  every  manufactured  thing.  Harbor  Research  Inc,  Jan 
+2005. 
+
+H.  L.  Krauss,  C.  W.  Bostian,  F.  H.  Raab,  Solid  State  Radio 
+Engineering. John Wiley and Sons Inc, 1980. 
+
+R.  W.  Lampe,  “Design  Formulas  for  an  Asymmetric  Coplanar  Strip 
+Folded Dipole,” IEEE Trans. Antenna and Propagation, vol AP-33, no. 9, 
+pp. 1028-1031, Sep. 1985 
+
+J.  D.  Larson  III,  et  al.,  “Modified  Butterworth-Van  Dyke  circuit  for 
+FBAR resonators and automated measurement systems”, Proceedings 
+of IEEE 2000 Ultrasonics Symposium, vol. 1, pp. 863-868, Oct 2000. 
+
+[Linear04] 
+
+LTC3020 linear regulator data sheet. www.linear.com 2004 
+
+ 
+
+119
+
+[Linten04] 
+
+D.  Linten,  et  al.,  "A  328µW  5GHz  voltage-controlled  oscillator  in 
+90nm  CMOS  with  high-quality  thin-film  post-processed  inductor", 
+Proceedings  of  IEEE  2004  Custom  Integrated  Circuits  Conference 
+(CICC), pp. 701-704, Oct 2004.  
+
+[Maxim03] 
+
+MAX6434 battery monitor data sheet.  www.maxim-ic.com 2003 
+
+[Mergens05] 
+
+[Molnar04] 
+
+M. P. J. Mergens, et al., “Advanced SCR ESD protection circuits for 
+CMOS/SOI  Nanotechnologies”,  Proceedings  of  2005  IEEE  Custom 
+Integrated Circuits Conference (CICC), pp 481-488, Sep 2005. 
+
+A. Molnar, B. Lu, S. Lanzisera, B. Cook, K. S. J. Pister, “An  ultra-low 
+power  900  MHz  RF  transceiver  for  wireless  sensor  networks,”  
+Proceedings  of  IEEE  2004  Custom  Integrated  Circuits  Conference 
+(CICC), pp. 401-404, Oct. 2004. 
+
+[Moteiv] 
+
+www.moteiv.com 
+
+[Niknejad98] 
+
+[Nyguen04] 
+
+A. M. Niknejad, R. G. Meyer, “Analysis, design and optimization of 
+spiral  inductors  and  transformers  for  Si  RF  ICs”,  IEEE  Journal  of 
+Solid State Circuits, vol. 33, no. 10, pp 1470-1481, Oct 1998. 
+
+C.  Nyguen,  “Vibrating  RF  MEMS  for  next  generation  wireless 
+applications,” Proceedings of IEEE 2004 Custom Integrated Circuits 
+Conference (CICC), pp. 257-264, Oct. 2004. 
+
+[Omron05] 
+
+D6B tilt sensor data sheet. www.omron.com 2005. 
+
+[Otis01] 
+
+B. P. Otis, J. Rabaey., "A 300-µW 1.9-GHz CMOS oscillator utilizing 
+micromachined resonators", IEEE Journal of Solid State Circuits, vol. 
+38, no. 7, pp. 1271-1274, Jul 2003. 
+
+ 
+
+ 
+
+120
+
+[Otis04] 
+
+[Otis05a] 
+
+[Otis05b] 
+
+[Raab77] 
+
+[Rabaey02] 
+
+B. Otis, Y. H. Chee, R. Lu, N. M. Pletcher, J. Rabaey, “An ultra-low 
+power  MEMS-based  two  channel  transceiver  for  wireless  sensor 
+networks”,  Digest  of  Technical  Papers,  2004  Symposium  on  VLSI 
+Circuits (VLSI), pp. 20-23, Jun. 2004. 
+
+B.  Otis,  Ultra-low  power  wireless  technologies  for  sensor  networks.  
+Ph. D. thesis, University of California, Berkeley, Apr 2005. 
+
+B.  Otis,  Y.  H.  Chee,  J.  Rabaey,  “A  400µW  Rx,  1.6mW  Tx  super-
+regenerative  transceiver  for  wireless  sensor  networks,” Digest of Technical 
+Papers,  International  Solid  State  Circuits  Conference  (ISSCC  2005),  San 
+Francisco, Feb. 2005, pp. 396-398 
+
+F.  H.  Raab,  “Idealized  operation  of  Class  E  tuned  power  amplifier”, 
+IEEE Transactions on circuit and systems, vol. 24, no. 12, Dec 1977, 
+pp 725-735. 
+
+J. Rabaey, et al., “PicoRadios for wireless sensor networks: The next 
+challenge  in  ultra-low  power  design”,  Digest  of  Technical  Papers, 
+2002 International Solid State Circuits Conference (ISSCC), pp. 200-
+201, Feb 2002. 
+
+[Rappaport02] 
+
+T. S. Rappaport, Wireless Communications: Principles and Practice. 
+Prentice Hall, 2nd Edition, 2002. 
+
+[Razavi04] 
+
+B.  Razavi,  “A  study  of  injection  locking  and  pulling  in  oscillators”, 
+IEEE  Journal  of  Solid  State  Circuits,  vol.  39,  pp.  1415-1424,  Sep. 
+2004. 
+
+[Razavi98] 
+
+B Razavi, RF Microelectronics. Prentice Hall, 1998. 
+
+[Rofougaran94]  M. Rofougaran, A. Rofougaran, A. A. Abidi, “A 900 MHz CMOS RF 
+power  amplifier  with  programmable  output”,    Digest  of  Technical 
+Papers, 1994 Symposium on VLSI circuits, pp. 133-134, Jun. 1994 
+
+ 
+
+121
+
+[Roundy05] 
+
+S. Roundy, et al., “Improving power output for vibration-based energy 
+scavengers”, Pervasive Computing, vol. 4, no. 1, pp 28-36, Jan 2005. 
+
+[Ruby01] 
+
+R.C. Ruby, et al., “Thin film bulk wave acoustic resonators (FBAR) 
+for  wireless  applications”,  Proceedings  of  IEEE  2001  Ultrasonics 
+Symposium, vol. 1, pp. 813-821, Oct 2001. 
+
+[Sensiron05] 
+
+temperature 
+
+SHT11 
+www.sensiron.com 2005. 
+
+and 
+
+humidity 
+
+sensor 
+
+data 
+
+sheet. 
+
+[SolarWorld05]  GTF-2x3 solar module data sheet. www.solarworld.com 2005. 
+
+[Song04] 
+
+T. Song, et al., "A 5GHz transformer coupled CMOS VCO using bias-
+level  shifting  technique",  Digest  of  IEEE  2004  Radio  Frequency 
+Integrated Circuits (RFIC) Symposium, pp. 127-130, Jun 2004. 
+
+[ST04] 
+
+LIS3L02AQ accelerometer data sheet. www.st.com 2004. 
+
+[Steinkamp03] 
+
+J.  Steinkamp,  et  al.  ,"A  5.84  GHz  tunable  SAW  oscillator  with 
+frequency  doubler  for  a  DSRC  system",  Digest  of  IEEE  2003  Radio 
+Frequency  Integrated  Circuits  (RFIC)  Symposium,  pp.  483-486,  Jun 
+2003.  
+
+[TI01] 
+
+[TI04] 
+
+[TI05] 
+
+[Toki92] 
+
+TPS60313 charge pump regulator data sheet. www.ti.com 2001. 
+
+MSP430F1232 microcontroller data sheet. www.ti.com 2004. 
+
+SN74AVC8T45 level converter data sheet. www.ti.com 2005. 
+
+M.  Toki,  Y.  Tsuzuki,  "Analysis  of  start-up  characteristics  of  CMOS 
+crystal  oscillatos,”  Proceedings  of  1992  IEEE  Frequency  Control 
+Symposium, pp. 448-452, May 1992. 
+
+ 
+
+122
+
+[Tsai99] 
+
+K.  C.  Tsai,  “A  1.9  GHz,  1-W  CMOS  class-E  power  amplifier  for 
+wireless communications,” IEEE J. Solid State Circuits, vol. 34, no. 7,  
+pp. 962-970, Jul 1999 
+
+[Uda54] 
+
+S. Uda, Y. Mushiake, Yagi-Uda Antenna, Sendai, Japan, Sasaki, 1954. 
+
+[Vittoz88] 
+
+[Yue05] 
+
+E. A. Vittoz, M. B. R. Degrauwe, S. Bitz, "High performance crystal 
+oscillator circuits: theory and application,” IEEE Journal of Solid State 
+Circuits, vol. 23, no. 3, pp. 774-783, Jun 1988. 
+
+C. P. Yue, S. S. Wong, “Scalability of RF CMOS,” Digest of Papers, 
+IEEE 2005 Radio Frequency Integrated Circuits (RFIC) Symposium, 
+pp 53-56, Jun 2005. 
+
+ 
+
+123
+
+
