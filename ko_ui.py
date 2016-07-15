@@ -66,13 +66,18 @@ class filedialogdemo(QWidget):
 		dlg = QFileDialog()
 		dlg.setFileMode(QFileDialog.AnyFile)
 		dlg.setFilter("Pdf files (*.pdf)")
+		dlg.setFilter("All files (*.*)")
 		filename = QStringList()
 
 		if dlg.exec_():
 			filenames = dlg.selectedFiles()
 			global f
 			f = filenames[0]
-		
+	
+	def convert(self):
+		#different file type
+		#if pdf file
+		#self.convert_pdf_to_txt()	
 
 	def convert_pdf_to_txt(self):
 		token = f.split('/')
@@ -88,6 +93,7 @@ class filedialogdemo(QWidget):
 		path = os.path.dirname(os.path.abspath(__file__))
 		outtxt = path + '/'+filename_txt
 		
+		###start here
 		rsrcmgr = PDFResourceManager()
 		retstr = StringIO()
 		codec = 'utf-8'
@@ -111,6 +117,8 @@ class filedialogdemo(QWidget):
 		output.write(strg)
 		retstr.close()
 		output.close()
+		###return strg
+		###end here
 		
 		#os_input = 'ko_modified_topic_modeling_and_frequency.py '+outtxt
 		print "Convertion pdf to txt is Successfully finished"
@@ -176,4 +184,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-	

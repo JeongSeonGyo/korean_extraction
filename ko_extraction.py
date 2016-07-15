@@ -18,7 +18,7 @@ class extract_korean:
 	def __init__(self):
 		self.file = ''
 
-	def extraction(self,f):
+	def extraction(self,f,p):
 		global file
 		file = f
 
@@ -33,12 +33,13 @@ class extract_korean:
 		count = len(cnt)
 		global data 
 		data = cnt.most_common(count)
-		self.to_csv()
+		self.to_csv(p)
+		
 
 
-	def to_csv(self):
+	def to_csv(self,path):
 		matrix = []
-		path =os.path.dirname(os.path.abspath(__file__)) 
+		#path =os.path.dirname(os.path.abspath(__file__)) 
 		path_plus_filename = path + '/' + file
 		
 		with open('temp.csv', 'w') as f:
@@ -54,9 +55,7 @@ class extract_korean:
 		print "Second conversion to csv is successfully finished"
 
 		with open('word.csv','a') as final:
-			final.write('\nNP, fre, FileName\n')
+			final.write('NP, frequency, FileName\n')
 			writer = csv.writer(final,delimiter = ',')
 			writer.writerows(matrix)
 		print "Finally Conversion text to csv is successfully finished"
-
-		
