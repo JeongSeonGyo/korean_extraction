@@ -18,7 +18,7 @@ class extract_korean:
 	def __init__(self):
 		self.file = ''
 
-	def extraction(self,f,p):
+	def extraction(self,f,p,original_file):
 		global file
 		file = f
 
@@ -33,14 +33,14 @@ class extract_korean:
 		count = len(cnt)
 		global data 
 		data = cnt.most_common(count)
-		self.to_csv(p)
+		self.to_csv(p,original_file)
 		
 
 
-	def to_csv(self,path):
+	def to_csv(self,path,origin_f):
 		matrix = []
 		#path =os.path.dirname(os.path.abspath(__file__)) 
-		path_plus_filename = path + '/' + file
+		path_plus_filename = path + '/' + origin_f
 		
 		with open('temp.csv', 'w') as f:
 			writer = csv.writer(f,delimiter = ',')

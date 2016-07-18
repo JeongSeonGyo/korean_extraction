@@ -57,7 +57,7 @@ class filedialogdemo(QWidget):
 
 		
 		self.setLayout(layout)
-		self.setWindowTitle("Extract Word")
+		self.setWindowTitle("Word Extraction")
 
 		self.btn2 = QPushButton("Conversion to text")
 		self.btn2.clicked.connect(self.convert)
@@ -146,7 +146,7 @@ class filedialogdemo(QWidget):
 			'''
 		#for extraction korean keyword
 		ext = ko_extraction.extract_korean()
-		ext.extraction(filename_txt,path)
+		ext.extraction(filename_txt,path,input_file)
 
 
 	def convert_pdf_to_txt(self):
