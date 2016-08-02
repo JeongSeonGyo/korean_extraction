@@ -59,11 +59,10 @@ class filedialogdemo(QWidget):
 		self.setLayout(layout)
 		self.setWindowTitle("Word Extraction")
 
-<<<<<<< HEAD
+
 		self.btn2 = QPushButton("Converse file format")
-=======
+
 		self.btn2 = QPushButton("Conversion to text")
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
 		self.btn2.clicked.connect(self.convert)
 		layout.addWidget(self.btn2)
 
@@ -84,27 +83,25 @@ class filedialogdemo(QWidget):
 		dlg.setNameFilters(["pdf files (*.pdf)" , "docx files (*.docx)", "odt files (*.odt)", "text files (*.txt)", "hwp files (*.hwp)", "All files (*.*)"])
 		filename = QStringList()
 
-<<<<<<< HEAD
+
 		print os.getcwd()
 
-=======
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
+
 		if dlg.exec_():
 			filenames = dlg.selectedFiles()
 			global f
 			f = filenames[0]
-<<<<<<< HEAD
+
 			global filepath
 			filepath = os.path.dirname(str(f))
 			
 	def convert(self):
 
-=======
+
 			global path
 			path = os.path.dirname(str(f))
 
 	def convert(self):
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
 		# check whether variable 'f' exist or not
 		if 'f' not in globals().keys():
 			print "ERROR! You OPEN file first"
@@ -130,13 +127,12 @@ class filedialogdemo(QWidget):
 		#path = os.path.dirname(os.path.abspath(__file__))	#/home/user/pyhon/code
 
 		global outtxt
-<<<<<<< HEAD
+
 		outtxt = os.getcwd() + '/'+filename_txt	#os.getcwd() ; current path
 		path_plus_file = filepath + '/' + input_file
-=======
+
 		outtxt = path + '/'+filename_txt
 		path_file = path + '/' + input_file
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
 		
 		#for different file type
 		if filename_extension == "pdf":
@@ -168,13 +164,13 @@ class filedialogdemo(QWidget):
 			'''
 		#for extraction korean keyword
 		ext = ko_extraction.extract_korean()
-<<<<<<< HEAD
+
 		ext.extraction(filename_txt,filepath,input_file)
 		
-=======
+
 		ext.extraction(filename_txt,path,input_file)
 
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
+
 
 	def convert_pdf_to_txt(self):
 		rsrcmgr = PDFResourceManager()
