@@ -22,14 +22,13 @@ class extract_korean:
 		global file
 		file = f
 
-<<<<<<< HEAD
-		print file
+
+		
 
 
 		doc = kolaw.open(os.getcwd(),file).read().lower()
-=======
+
 		doc = kolaw.open(file).read().lower()
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
 		print ("Start keyword extraction.")
 
 		k = Komoran()
@@ -38,10 +37,8 @@ class extract_korean:
 		cnt = Counter(pos)
 		# format : nonus, frequency, path
 		count = len(cnt)
-<<<<<<< HEAD
 		
-=======
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
+
 		global data 
 		data = cnt.most_common(count)
 		self.to_csv(p,original_file)
@@ -70,9 +67,9 @@ class extract_korean:
 			writer = csv.writer(final,delimiter = ',')
 			writer.writerows(matrix)
 		print "Finally Conversion text to csv is successfully finished"
-<<<<<<< HEAD
+ 
 
 		os.system("rm temp.csv")
 		os.system("rm txt_*.txt")
-=======
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
+
+ 
