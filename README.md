@@ -22,7 +22,7 @@
  1. ko_ui_test.py 실행
  2. 'File Open' 버튼 클릭
  3. 파일 선택
- 4. 'Conversion to text' 버튼 클릭
+ 4. 'Converse file format' 버튼 클릭
  5. 입력란에 검색하고 싶은 단어 입력
  6. 'Search' 버튼 클릭
 
