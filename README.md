@@ -18,6 +18,13 @@
  - ko_extraction.py
  - hwp, txt, odt, docx, pdf 형식의 파일
  
+변경 사항 :
+ - konlpy 에서 제공하는 corpus.py의 내용 수정 필요
+ - def abspath(self, filename, basedir) 추가
+ - open 함수 변경
+  1) parameter 'basedir' 추가
+  2) return utils.load_txt(self.abspath(filename,basedir)) 로 변경
+ 
 실행 방법 :
  1. ko_ui_test.py 실행
  2. 'File Open' 버튼 클릭
