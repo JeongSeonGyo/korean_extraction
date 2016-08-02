@@ -1,40 +1,28 @@
 #! /usr/bin/python2.7
 # -*- coding: utf-8 -*-
 
-from subprocess import Popen, PIPE
-import docx #for docx file
-
 from django.utils.encoding import smart_str, smart_unicode
+from collections import Counter
 
-#for korean
 from konlpy.corpus import kolaw
 from konlpy.utils import concordance, pprint
 from matplotlib import pyplot
 from konlpy.tag import Komoran
 
 import sys 
-
-#for ui
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
-#for pdf file 
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from cStringIO import StringIO
-
 import os
 import time
-
-import ko_extraction #for korean keyword extraction
-
+import ko_extraction
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
-
-
 
 class MyListView(QListView):
 	def ItemClicked(self,index):
@@ -57,14 +45,10 @@ class filedialogdemo(QWidget):
 
 		
 		self.setLayout(layout)
-		self.setWindowTitle("Word Extraction")
+		self.setWindowTitle("Extract Word")
 
-<<<<<<< HEAD
-		self.btn2 = QPushButton("Converse file format")
-=======
 		self.btn2 = QPushButton("Conversion to text")
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
-		self.btn2.clicked.connect(self.convert)
+		self.btn2.clicked.connect(self.convert_pdf_to_txt)
 		layout.addWidget(self.btn2)
 
 		self.ql = QLineEdit()
@@ -81,102 +65,35 @@ class filedialogdemo(QWidget):
 	def getfiles(self):
 		dlg = QFileDialog()
 		dlg.setFileMode(QFileDialog.AnyFile)
-		dlg.setNameFilters(["pdf files (*.pdf)" , "docx files (*.docx)", "odt files (*.odt)", "text files (*.txt)", "hwp files (*.hwp)", "All files (*.*)"])
+		dlg.setFilter("Pdf files (*.pdf)")
+		dlg.setFilter("All files (*.*)")
 		filename = QStringList()
 
-<<<<<<< HEAD
-		print os.getcwd()
-
-=======
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
 		if dlg.exec_():
 			filenames = dlg.selectedFiles()
 			global f
 			f = filenames[0]
-<<<<<<< HEAD
-			global filepath
-			filepath = os.path.dirname(str(f))
-			
+	
 	def convert(self):
+		#different file type
+		#if pdf file
+		#self.convert_pdf_to_txt()	
 
-=======
-			global path
-			path = os.path.dirname(str(f))
-
-	def convert(self):
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
-		# check whether variable 'f' exist or not
-		if 'f' not in globals().keys():
-			print "ERROR! You OPEN file first"
-			return
-
+	def convert_pdf_to_txt(self):
 		token = f.split('/')
 
 		global input_file 
-		input_file = token[-1] # ex : what.pdf
+		input_file = token[-1]
 		
-		filename_extension = input_file[-4:] #ex: pdf docx ...
+		filename_extension = input_file[-3:]
 
-		if filename_extension == 'docx':
-			filename_extension = filename_extension
-			extension_num = -4
-		else:
-			filename_extension = input_file[-3:]
-			extension_num = -3
+		global filename_txt
+		filename_txt = 'txt_'+input_file[:-3]+'txt'
 
-
-		filename_txt = 'txt_'+input_file[:extension_num]+'txt' #ex: txt_filename.txt
-		
-		#path = os.path.dirname(os.path.abspath(__file__))	#/home/user/pyhon/code
-
-		global outtxt
-<<<<<<< HEAD
-		outtxt = os.getcwd() + '/'+filename_txt	#os.getcwd() ; current path
-		path_plus_file = filepath + '/' + input_file
-=======
+		path = os.path.dirname(os.path.abspath(__file__))
 		outtxt = path + '/'+filename_txt
-		path_file = path + '/' + input_file
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
 		
-		#for different file type
-		if filename_extension == "pdf":
-			print "Start convert pdf to txt"
-			self.convert_pdf_to_txt()
-
-		elif filename_extension == "docx":
-			print "Start convert docx to txt"
-			self.convert_docx_to_txt(input_file)
-
-		elif filename_extension == "txt":
-			print "Text file don't need to convert. Do next step"
-
-		elif filename_extension == "hwp":
-			print "Start convert hwp to txt"
-			self.convert_hwp_to_txt(input_file)			
-
-		elif filename_extension == "odt":
-			print "Start convert odt to txt"
-			self.convert_odt_to_txt(input_file)
-		
-		else:
-			print ("Sorry, We Don't support %s file." %filename_extension)
-			return
-			'''
-			elif filename_extension == "doc":
-				print "Start convert doc to txt"
-				self.convert_doc_to_txt(input_file)
-			'''
-		#for extraction korean keyword
-		ext = ko_extraction.extract_korean()
-<<<<<<< HEAD
-		ext.extraction(filename_txt,filepath,input_file)
-		
-=======
-		ext.extraction(filename_txt,path,input_file)
-
->>>>>>> 4da285438cb625ace0e12654ba01c35bbdc9218a
-
-	def convert_pdf_to_txt(self):
+		###start here
 		rsrcmgr = PDFResourceManager()
 		retstr = StringIO()
 		codec = 'utf-8'
@@ -200,48 +117,17 @@ class filedialogdemo(QWidget):
 		output.write(strg)
 		retstr.close()
 		output.close()
-	
+		###return strg
+		###end here
+		
 		#os_input = 'ko_modified_topic_modeling_and_frequency.py '+outtxt
 		print "Convertion pdf to txt is Successfully finished"
-		#return strg	
 
-	def convert_doc_to_txt(self,f):    
-		output = open(outtxt,'w')
-		
-		output.write(strg)
-		output.close()
+		ext = ko_extraction.extract_korean()
+		ext.extraction(filename_txt)
 
-		print "Conversion doc to txt is successufully finished"
-		#return strg
-	    
-	def convert_docx_to_txt(self,f):
-		output = open(outtxt,'w')
-		document = docx.opendocx(str(f))
+		return strg	
 
-		paratextlist = docx.getdocumenttext(document)
-		newparatextlist = []
-		for paratext in paratextlist:
-			newparatextlist.append(paratext.encode('utf-8'))
-		print "Convertion docx to txt is Successfully finished"
-		strg = '\n\n'.join(newparatextlist)
-		output.write(strg)
-		output.close()
-
-		#return strg
-
-	def convert_odt_to_txt(self,f):
-		output = open(outtxt,'w')		
-		os.system("odt2txt " + str(f) + " > " + str(outtxt))
-	   	output.close()
-
-	   	print "Convertion odt to txt is Successfully finished"
-
-	def convert_hwp_to_txt(self,f):
-		output = open(outtxt,'w')		
-		os.system("hwp5txt " + str(f) + " > " + str(outtxt))
-	   	output.close()
-
-	   	print "Convertion hwp to txt is Successfully finished"
 
 	def search(self):
 		search_keyword = str(self.ql.text()).lower()
@@ -274,12 +160,9 @@ class filedialogdemo(QWidget):
     				for b in range(len(search_list)):
     					file_string = file_string + search_list[b] + ';'
 
-    				file_string = unicode(str(file_string).decode('utf-8'))
-    				print file_string    		
+    				print file_string    			
     				print search_list
     				print len(search_list)
-
-    		
    		
     		self.model.setStringList(QString(file_string).split(";"))
     		self.fl.setModel(self.model)
